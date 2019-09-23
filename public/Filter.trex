@@ -21,7 +21,7 @@
      </dashboard-extension>
      <resources>
        <resource id="name">
-         <text locale="en_US">Styled Filter</text>
+         <text locale="en_US">Nav</text>
        </resource>
      </resources>
    </manifest>

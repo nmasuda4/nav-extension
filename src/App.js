@@ -70,8 +70,6 @@ const App = () => {
           })
         })
 
-      // tableau.extensions.settings.set("views", list1)
-
       // .then(d => {
       //   console.log('d', d)
       //   // d.map(parameter => {
@@ -83,7 +81,8 @@ const App = () => {
       // Wait for all requests, and then setData
       promises.then(() => {
         console.log("list", list1)
-        // const views = tableau.extensions.settings.get("views")
+        tableau.extensions.settings.set("views", list1)
+
         setLoading(false)
         setParameter(list1)
         // typeof views !== "undefined" ? setLoading(true) : setLoading(false);
