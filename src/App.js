@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react"
 import "./App.css"
-import Filter from "./components/Filter"
+// import Filter from "./components/Filter"
 import Nav from "./components/Nav"
-import Bar from "./components/Bar"
+// import Bar from "./components/Bar"
 
 /* global tableau */
 
 const App = () => {
   const [loading, setLoading] = useState(true)
-  const [data, setData] = useState([])
+  // const [data, setData] = useState([])
   const [parameter, setParameter] = useState([])
   console.log("hello")
 
@@ -33,11 +33,14 @@ const App = () => {
 
   useEffect(() => {
     tableau.extensions.initializeAsync().then(() => {
+      // clear old views
+      tableau.extensions.settings.erase("views")
+
       const list1 = []
       const promises = tableau.extensions.dashboardContent.dashboard
         .getParametersAsync()
         .then(d => {
-          d.map(parameter => {
+          return d.map(parameter => {
             if (parameter.name === "Dashboard") {
               return parameter.allowableValues.allowableValues.map(option => {
                 return list1.push(option.formattedValue)
@@ -60,14 +63,13 @@ const App = () => {
   // }
 
   return (
-    <div className="App">
+    <div className="">
       {loading ? (
-        <div>Loading</div>
+        <div className="text-danger">Loading</div>
       ) : (
         // <Filter data={parameter}></Filter>
-        <div>
-          <Nav data={parameter} />
-        </div>
+
+        <Nav data={parameter} />
       )}
       {/* <button id="initializeButton" onClick={getParameter} className="btn btn-primary">
           Initialize Extensions API

@@ -3,7 +3,7 @@ import { Layout, Menu, Icon } from "antd"
 import "antd/dist/antd.css"
 import Logo from "../HRlogo.png"
 
-const { Header, Content, Footer, Sider } = Layout
+const { Sider } = Layout
 const { SubMenu } = Menu
 
 /* global tableau */
@@ -12,23 +12,8 @@ const Nav = ({ data }) => {
   console.log("data", data)
 
   function onChange(e, all) {
-    console.log(`selected ${e.key}`)
-    console.log("all", all)
-
     // parameter
     tableau.extensions.initializeAsync().then(() => {
-      console.log(
-        "log",
-        tableau.extensions.dashboardContent.dashboard.getParametersAsync()
-      )
-      const parameters = tableau.extensions.dashboardContent.dashboard
-        .getParametersAsync()
-        .then(d => {
-          d.map(parameter => {
-            return parameter.changeValueAsync(e.key)
-          })
-        })
-
       tableau.extensions.dashboardContent.dashboard.objects.forEach(function(
         object
       ) {
@@ -49,8 +34,6 @@ const Nav = ({ data }) => {
         object
       ) {
         if (views.includes(object.name)) {
-          // else if (object.id !== 12) {
-
           if (
             keepName.includes(object.name) ||
             extensionName.includes(object.name)
@@ -75,39 +58,37 @@ const Nav = ({ data }) => {
     })
   }
 
-  function changeCollapse() {
-    setCollapse(!collapse)
-  }
-
   const [item, setItem] = useState([])
-  const [collapse, setCollapse] = useState(false)
 
   console.log("item", item)
 
+  const modifiedData = data.filter(d => d !== "Summary")
+  const hasSummary = data.includes("Summary")
+
+  console.log("modifiedData", modifiedData)
+  console.log("hasSummary", hasSummary)
   const format = [
-    { name: 1, options: [1, 2] }
+    { name: "Constructs", options: modifiedData }
     // { name: 2, options: [101, 102] }
   ]
 
-  // data = [1,2,3,4,5]
-  // if (data.map((d,i) => {
-  //   const format = [];
-  //   const obj = {};
-
-  //   d < 100 ? obj.name = names[0]
-
-  //   format.push(d) :
-  //   name.push({options.push(d)})
-  // }) )
-
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Sider collapsible collapsed={collapse} onCollapse={changeCollapse}>
+    <Layout style={{ minHeight: "100vh", height: "100vh" }}>
+      <Sider
+        width={280}
+        style={{
+          height: "100%",
+          display: "flex",
+          flexDirection: "column"
+        }}
+        theme="dark"
+      >
         <img
           src={Logo}
           alt="website logo"
           width="135"
           height="30"
+          className="d-flex justify-content-center align-items-center"
           style={{ margin: "10px" }}
         />
         <Menu
@@ -116,22 +97,34 @@ const Nav = ({ data }) => {
           all={data}
           selectedKeys={item}
           mode="inline"
+          defaultSelectedKeys={["Summary"]}
+          style={{ flexGrow: 1, height: "100%" }}
         >
+          {hasSummary ? (
+            <Menu.Item key="Summary">
+              <Icon type="fund" theme="filled" style={{ fontSize: "18px" }} />
+              <span>Summary</span>
+            </Menu.Item>
+          ) : null}
+
           {format.map(d => {
             return (
               <SubMenu
                 key={d.name}
                 title={
                   <span>
-                    <Icon type="bar-chart" />
+                    <Icon
+                      type="tags"
+                      theme="filled"
+                      style={{ fontSize: "18px" }}
+                    />
                     <span>{d.name}</span>
                   </span>
                 }
               >
                 {d.options.map((f, i) => {
                   return (
-                    <Menu.Item key={f}>
-                      <Icon type="right-square" />
+                    <Menu.Item key={f} style={{ paddingLeft: "18px" }}>
                       <span>{f}</span>
                     </Menu.Item>
                   )
@@ -139,46 +132,16 @@ const Nav = ({ data }) => {
               </SubMenu>
             )
           })}
-          {/* <SubMenu
-            key="sub1"
-            title={
-              <span>
-                <Icon type="user" />
-                <span>User</span>
-              </span>
-            }
-          >
-            {data.map((d, i) => {
-              if (i <= 2)
-                return (
-                  <Menu.Item key={d}>
-                    <Icon type="mail" />
-                    <span>{d}</span>
-                  </Menu.Item>
-                )
-            })}
-          </SubMenu>
-
-          <SubMenu
-            key="sub2"
-            title={
-              <span>
-                <Icon type="user" />
-                <span>User</span>
-              </span>
-            }
-          >
-            {data.map((d, i) => {
-              if (i > 2)
-                return (
-                  <Menu.Item key={d}>
-                    <Icon type="mail" />
-                    <span>{d}</span>
-                  </Menu.Item>
-                )
-            })}
-          </SubMenu> */}
         </Menu>
+        <p
+          style={{
+            color: "#bcbbbb",
+            backgroundColor: "transparent",
+            fontSize: "11px"
+          }}
+        >
+          Copyright © 2019 Hanover Research
+        </p>
       </Sider>
     </Layout>
   )
