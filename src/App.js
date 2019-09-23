@@ -55,31 +55,6 @@ const App = () => {
 
   // function getParameter() {
 
-  tableau.extensions.initializeDialogAsync().then(() => {
-    const list1 = []
-    const promises = tableau.extensions.dashboardContent.dashboard
-      .getParametersAsync()
-      .then(d => {
-        d.map(parameter => {
-          if (parameter.name === "Dashboard") {
-            return parameter.allowableValues.allowableValues.map(option => {
-              return list1.push(option.formattedValue)
-            })
-          }
-        })
-      })
-
-    // Wait for all requests, and then setData
-    promises.then(() => {
-      tableau.extensions.settings.set("views", list1)
-
-      console.log("views", tableau.extensions.settings.get("views"))
-      console.log("list1", list1)
-      setLoading(false)
-      setViews(list1)
-    })
-  })
-
   useEffect(() => {
     tableau.extensions.initializeAsync({ configure: configure }).then(() => {
       const list1 = []
@@ -109,6 +84,7 @@ const App = () => {
       promises.then(() => {
         console.log("list", views)
         // const views = tableau.extensions.settings.get("views")
+        setLoading(false)
         setParameter(list1)
         // typeof views !== "undefined" ? setLoading(true) : setLoading(false);
       })
