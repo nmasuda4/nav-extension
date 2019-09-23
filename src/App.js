@@ -1,33 +1,33 @@
-import React, { useState, useEffect } from "react";
-import "./App.css";
-import Filter from "./components/Filter";
-import Nav from "./components/Nav";
-import Bar from "./components/Bar";
+import React, { useState, useEffect } from "react"
+import "./App.css"
+import Filter from "./components/Filter"
+import Nav from "./components/Nav"
+import Bar from "./components/Bar"
 
 /* global tableau */
 
 const App = () => {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
-  const [parameter, setParameter] = useState([]);
-  console.log("hello");
+  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState([])
+  const [parameter, setParameter] = useState([])
+  console.log("hello")
 
-  function configure() {
-    const popupUrl = "http://localhost:4000/config.html";
-    let defaultPayload = "";
-    tableau.extensions.ui
-      .displayDialogAsync(popupUrl, defaultPayload, { height: 400, width: 600 })
-      .then(closePayload => {})
-      .catch(error => {
-        switch (error.errorCode) {
-          case tableau.ErrorCodes.DialogClosedByUser:
-            console.log("Dialog was closed by user");
-            break;
-          default:
-            console.error(error.message);
-        }
-      });
-  }
+  // function configure() {
+  //   const popupUrl = "http://localhost:4000/config.html";
+  //   let defaultPayload = "";
+  //   tableau.extensions.ui
+  //     .displayDialogAsync(popupUrl, defaultPayload, { height: 400, width: 600 })
+  //     .then(closePayload => {})
+  //     .catch(error => {
+  //       switch (error.errorCode) {
+  //         case tableau.ErrorCodes.DialogClosedByUser:
+  //           console.log("Dialog was closed by user");
+  //           break;
+  //         default:
+  //           console.error(error.message);
+  //       }
+  //     });
+  // }
 
   // function getFilters() {
   //   tableau.extensions.initializeAsync().then(() => {
@@ -55,11 +55,47 @@ const App = () => {
 
   // function getParameter() {
 
+  tableau.extensions.initializeDialogAsync().then(() => {
+    const list1 = []
+    const promises = tableau.extensions.dashboardContent.dashboard
+      .getParametersAsync()
+      .then(d => {
+        d.map(parameter => {
+          if (parameter.name === "Dashboard") {
+            return parameter.allowableValues.allowableValues.map(option => {
+              return list1.push(option.formattedValue)
+            })
+          }
+        })
+      })
+
+    // Wait for all requests, and then setData
+    promises.then(() => {
+      tableau.extensions.settings.set("views", list1)
+
+      console.log("views", tableau.extensions.settings.get("views"))
+      console.log("list1", list1)
+      setLoading(false)
+      setViews(list1)
+    })
+  })
+
   useEffect(() => {
     tableau.extensions.initializeAsync({ configure: configure }).then(() => {
-      const list1 = [];
-      const promises = tableau.extensions.dashboardContent.dashboard.getParametersAsync();
-      const views = tableau.extensions.settings.get("views");
+      const list1 = []
+      const promises = tableau.extensions.dashboardContent.dashboard
+        .getParametersAsync()
+        .then(d => {
+          d.map(parameter => {
+            if (parameter.name === "Dashboard") {
+              return parameter.allowableValues.allowableValues.map(option => {
+                return list1.push(option.formattedValue)
+              })
+            }
+          })
+        })
+
+      // tableau.extensions.settings.set("views", list1)
 
       // .then(d => {
       //   console.log('d', d)
@@ -71,12 +107,13 @@ const App = () => {
       // })
       // Wait for all requests, and then setData
       promises.then(() => {
-        console.log("list", views);
-        setParameter(list1);
+        console.log("list", views)
+        // const views = tableau.extensions.settings.get("views")
+        setParameter(list1)
         // typeof views !== "undefined" ? setLoading(true) : setLoading(false);
-      });
-    });
-  }, []);
+      })
+    })
+  }, [])
   // }
 
   return (
@@ -93,7 +130,7 @@ const App = () => {
           Initialize Extensions API
         </button> */}
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
