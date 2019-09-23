@@ -29,30 +29,6 @@ const App = () => {
   //     });
   // }
 
-  // function getFilters() {
-  //   tableau.extensions.initializeAsync().then(() => {
-  //     const worksheets =
-  //       tableau.extensions.dashboardContent.dashboard.worksheets;
-  //     const filters = [];
-  //     const promises = worksheets.map(d => {
-  //       return d.getFiltersAsync().then(f => {
-  //         f.map(g => {
-  //           return g.appliedValues.map((h, i) => {
-  //             return filters.push(h.formattedValue);
-  //           });
-  //         });
-  //       });
-  //     });
-
-  //     // Wait for all requests, and then setData
-  //     Promise.all(promises).then(() => {
-  //       console.log("filters", filters);
-  //       setData(filters);
-  //       setLoading(false);
-  //     });
-  //   });
-  // }
-
   // function getParameter() {
 
   useEffect(() => {
@@ -70,14 +46,6 @@ const App = () => {
           })
         })
 
-      // .then(d => {
-      //   console.log('d', d)
-      //   // d.map(parameter => {
-      //   //   return parameter.allowableValues.allowableValues.map(datavalue => {
-      //   //     return list1.push(datavalue.value)
-      //   //   })
-      //   // })
-      // })
       // Wait for all requests, and then setData
       promises.then(() => {
         console.log("list", list1)
