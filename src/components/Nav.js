@@ -1,19 +1,19 @@
-import React, { useState } from "react"
-import { Layout, Menu, Icon } from "antd"
-import "antd/dist/antd.css"
-import Logo from "../HRlogo.png"
+import React, { useState } from "react";
+import { Layout, Menu, Icon } from "antd";
+import "antd/dist/antd.css";
+import Logo from "../HRlogo.png";
 
-const { Header, Content, Footer, Sider } = Layout
-const { SubMenu } = Menu
+const { Header, Content, Footer, Sider } = Layout;
+const { SubMenu } = Menu;
 
 /* global tableau */
 
 const Nav = ({ data }) => {
-  console.log("data", data)
+  console.log("data", data);
 
   function onChange(e, all) {
-    console.log(`selected ${e.key}`)
-    console.log("all", all)
+    console.log(`selected ${e.key}`);
+    console.log("all", all);
 
     // const popupUrl = "http://localhost:3000/config.html"
     // const defaultPayload = "hi"
@@ -44,25 +44,30 @@ const Nav = ({ data }) => {
       console.log(
         "log",
         tableau.extensions.dashboardContent.dashboard.getParametersAsync()
-      )
+      );
       const parameters = tableau.extensions.dashboardContent.dashboard
         .getParametersAsync()
         .then(d => {
           d.map(parameter => {
-            return parameter.changeValueAsync(e.key)
-          })
-        })
+            return parameter.changeValueAsync(e.key);
+          });
+        });
 
       tableau.extensions.dashboardContent.dashboard.objects.forEach(function(
         object
       ) {
-        console.log(object.name + ":" + object.id + ":" + object.isVisible)
-      })
+        console.log(object.name + ":" + object.id + ":" + object.isVisible);
+      });
 
-      let extensionName = ["Styled Filter"]
-      let keepName = [e.key]
-      let views = ["1", "2", "3", "101", "102"]
-      let extensionVisibilityObject = {}
+      const views = tableau.extensions.settings.get("views");
+
+      console.log("get", views);
+      // setValue(retrieved)
+
+      let extensionName = ["Styled Filter"];
+      let keepName = [e.key];
+      // let views = ["1", "2", "3", "101", "102"]
+      let extensionVisibilityObject = {};
 
       tableau.extensions.dashboardContent.dashboard.objects.forEach(function(
         object
@@ -76,38 +81,38 @@ const Nav = ({ data }) => {
           ) {
             // show
             extensionVisibilityObject[object.id] =
-              tableau.ZoneVisibilityType.Show
+              tableau.ZoneVisibilityType.Show;
           } else {
             // hide
             extensionVisibilityObject[object.id] =
-              tableau.ZoneVisibilityType.Hide
+              tableau.ZoneVisibilityType.Hide;
           }
         }
-      })
+      });
 
       tableau.extensions.dashboardContent.dashboard
         .setZoneVisibilityAsync(extensionVisibilityObject)
         .then(() => {
-          console.log("done")
-        })
-      setItem([e.key])
-    })
+          console.log("done");
+        });
+      setItem([e.key]);
+    });
   }
 
   function changeCollapse() {
-    setCollapse(!collapse)
+    setCollapse(!collapse);
   }
 
-  const [item, setItem] = useState([])
-  const [collapse, setCollapse] = useState(false)
+  const [item, setItem] = useState([]);
+  const [collapse, setCollapse] = useState(false);
 
-  console.log("item", item)
+  console.log("item", item);
 
   const format = [
     { name: 1, options: [1, 2, 3] },
     { name: 2, options: [101, 102] }
-  ]
-  const names = [1, 2]
+  ];
+  const names = [1, 2];
   // data = [1,2,3,4,5]
   // if (data.map((d,i) => {
   //   const format = [];
@@ -153,10 +158,10 @@ const Nav = ({ data }) => {
                       <Icon type="right-square" />
                       <span>{f}</span>
                     </Menu.Item>
-                  )
+                  );
                 })}
               </SubMenu>
-            )
+            );
           })}
           {/* <SubMenu
             key="sub1"
@@ -200,10 +205,10 @@ const Nav = ({ data }) => {
         </Menu>
       </Sider>
     </Layout>
-  )
-}
+  );
+};
 
-export default Nav
+export default Nav;
 
 // <Layout style={{ minHeight: '100vh' }}>
 //   <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>

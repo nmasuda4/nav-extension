@@ -1,22 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
+    <meta charset="UTF-8" />
+    <title>Config</title>
 
+    <!-- Add Bootstrap. -->
     <link
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
     />
+    <link rel="stylesheet" href="https://unpkg.com/antd/dist/antd.css" />
+
+    <!-- Add Tableau. -->
     <script src="https://cdn.jsdelivr.net/gh/tableau/extensions-api@master/lib/tableau.extensions.1.latest.js"></script>
   </head>
   <body>
-    <div>Hello there!</div>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <h2>Configuration Settings</h2>
+    <p>This page demonstrates using React with no build tooling.</p>
+
+    <!-- We will put our React component inside this div. -->
+    <div id="config_container"></div>
+
+    <!-- Load React. -->
+    <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+    <script
+      src="https://unpkg.com/react@16/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
+
+    <script src="https://unpkg.com/moment/min/moment-with-locales.js"></script>
+
+    <script src="https://unpkg.com/antd/dist/antd-with-locales.js"></script>
+    <!-- Load our React component. -->
+    <script type="text/babel" src="test.js"></script>
   </body>
 </html>
