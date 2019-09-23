@@ -56,7 +56,7 @@ const App = () => {
   // function getParameter() {
 
   useEffect(() => {
-    tableau.extensions.initializeAsync({ configure: configure }).then(() => {
+    tableau.extensions.initializeAsync().then(() => {
       const list1 = []
       const promises = tableau.extensions.dashboardContent.dashboard
         .getParametersAsync()
@@ -82,7 +82,7 @@ const App = () => {
       // })
       // Wait for all requests, and then setData
       promises.then(() => {
-        console.log("list", views)
+        console.log("list", list1)
         // const views = tableau.extensions.settings.get("views")
         setLoading(false)
         setParameter(list1)
