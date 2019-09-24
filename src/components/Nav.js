@@ -9,10 +9,11 @@ const { SubMenu } = Menu
 
 /* global tableau */
 
-const Nav = ({ data, main }) => {
+const Nav = ({ data, height }) => {
   console.log("data", data)
+  console.log("height", height)
 
-  function onChange(e, all) {
+  function onChange(e) {
     // parameter
     tableau.extensions.initializeAsync().then(() => {
       tableau.extensions.dashboardContent.dashboard.objects.forEach(function(
@@ -24,7 +25,6 @@ const Nav = ({ data, main }) => {
       const views = tableau.extensions.settings.get("views")
 
       console.log("get", views)
-      // setValue(retrieved)
 
       let extensionName = ["Nav"]
       let keepName = [e.key]
@@ -68,72 +68,36 @@ const Nav = ({ data, main }) => {
     { name: "List", icon: "table" },
     { name: "Methodology", icon: "setting" }
   ]
-  const secondary = [
-    // { primary: "Summary", name: "Summary" },
-    // { primary: "Profile", name: "Demographics" },
-    // { primary: "Profile", name: "Preferences" }
-    // { primary: "List", name: "List" }
-  ]
-  const ternary = [{ secondary: "Preferences", name: "Survey 1" }]
-
-  const format = []
-  primary.map(d => format.push({ name: d.name, icon: d.icon, options: [] }))
-
-  secondary.map(d => {
-    format.map(g => {
-      if (g.name === d.primary)
-        return g.options.push({ name: d.name, options: [] })
-    })
-  })
-
-  format.map(d => {
-    d.options.map(g => {
-      ternary.map(h => {
-        if (h.secondary === g.name) return g.options.push(h.name)
-      })
-    })
-  })
-
-  // const modifiedData = data.filter(d => mainCategories.includes(d))
-  const hasSummary = data.includes("Summary")
-
-  // console.log("modifiedData", modifiedData)
-  console.log("hasSummary", hasSummary)
-  // const format = [
-  //   { name: "Constructs", options: modifiedData }
-  //   // { name: 2, options: [101, 102] }
-  // ]
 
   return (
-    <Layout style={{ minHeight: "100vh", height: "100vh" }}>
+    <Layout style={{ maxHeight: `${height - 52}px` }}>
       <Sider
         style={{
-          height: "100%",
+          height: `${height - 52}px`,
           display: "flex",
           flexDirection: "column"
         }}
         theme="dark"
-        main={main}
         collapsedWidth={60}
+        collapsed={true}
       >
-        {main ? (
-          <img
-            src={LogoCollapsed}
-            alt="website logo"
-            // width={collapsed ? "40" : "135"}
-            height={"30"}
-            style={{
-              margin: "10px auto",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          />
-        ) : null}
+        <img
+          src={LogoCollapsed}
+          alt="website logo"
+          // width={collapsed ? "40" : "135"}
+          height={"30"}
+          style={{
+            margin: "10px auto",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        />
         <Menu
           theme="dark"
           onClick={onChange}
           all={data}
+          inlineCollapsed={true}
           // selectedKeys={item}
           selectable
           mode="inline"
@@ -162,31 +126,6 @@ const Nav = ({ data, main }) => {
                 <span>{d.name}</span>
               </Menu.Item>
             )
-            // (
-            //   <SubMenu
-            //     key={d.name}
-            //     title={
-            //       <span>
-            //         <Icon
-            //           type={d.icon}
-            //           theme="outlined"
-            //           style={{ fontSize: "14px" }}
-            //         />
-            //         <span>{d.name}</span>
-            //       </span>
-            //     }
-            //   >
-            //     {d.options.map(g => {
-            //       return (
-            //         <Menu.ItemGroup key={g.name} title={g.name}>
-            //           {g.options.map(h => {
-            //             return <Menu.Item key={h}>{h}</Menu.Item>
-            //           })}
-            //         </Menu.ItemGroup>
-            //       )
-            //     })}
-            //   </SubMenu>
-            // )
           })}
         </Menu>
         {/* <p
@@ -204,33 +143,3 @@ const Nav = ({ data, main }) => {
 }
 
 export default Nav
-
-// {d.options.map((f, i) => {
-//   return (
-//     <SubMenu
-//     key={d.name}
-//     title={
-//       <span>
-//         <Icon
-//           type="tags"
-//           theme="filled"
-//           style={{ fontSize: "9px" }}
-//         />
-//         <span>{d.name}</span>
-//       </span>
-//     }
-//   >
-//     {d.options.map((f, i) => {
-//       return (
-//         <Menu.Item key={f} style={{ paddingLeft: "18px" }}>
-//           <span>{f}</span>
-//         </Menu.Item>
-//       )
-//     })}
-//   </SubMenu>
-
-//     <Menu.Item key={f} style={{ paddingLeft: "18px" }}>
-//       <span>{f}</span>
-//     </Menu.Item>
-//   )
-// })}
