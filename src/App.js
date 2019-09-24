@@ -1,40 +1,37 @@
 import React, { useState, useEffect } from "react"
 import "./App.css"
-// import Filter from "./components/Filter"
 import Nav from "./components/Nav"
-// import Bar from "./components/Bar"
 
 /* global tableau */
 
 const App = () => {
   const [loading, setLoading] = useState(true)
-  // const [data, setData] = useState([])
   const [parameter, setParameter] = useState([])
+  const [main, setMain] = useState([])
   console.log("hello")
 
-  // function configure() {
-  //   const popupUrl = "http://localhost:4000/config.html";
-  //   let defaultPayload = "";
-  //   tableau.extensions.ui
-  //     .displayDialogAsync(popupUrl, defaultPayload, { height: 400, width: 600 })
-  //     .then(closePayload => {})
-  //     .catch(error => {
-  //       switch (error.errorCode) {
-  //         case tableau.ErrorCodes.DialogClosedByUser:
-  //           console.log("Dialog was closed by user");
-  //           break;
-  //         default:
-  //           console.error(error.message);
-  //       }
-  //     });
-  // }
-
-  // function getParameter() {
+  function configure() {
+    const popupUrl = "http://localhost:4000/config.html"
+    let defaultPayload = ""
+    tableau.extensions.ui
+      .displayDialogAsync(popupUrl, defaultPayload, { height: 400, width: 600 })
+      .then(closePayload => {})
+      .catch(error => {
+        switch (error.errorCode) {
+          case tableau.ErrorCodes.DialogClosedByUser:
+            console.log("Dialog was closed by user")
+            break
+          default:
+            console.error(error.message)
+        }
+      })
+  }
 
   useEffect(() => {
-    tableau.extensions.initializeAsync().then(() => {
+    tableau.extensions.initializeAsync({ configure: configure }).then(() => {
       // clear old views
       tableau.extensions.settings.erase("views")
+      setMain(tableau.extensions.settings.get("main"))
 
       const list1 = []
       const promises = tableau.extensions.dashboardContent.dashboard
@@ -56,24 +53,18 @@ const App = () => {
 
         setLoading(false)
         setParameter(list1)
-        // typeof views !== "undefined" ? setLoading(true) : setLoading(false);
       })
     })
   }, [])
   // }
 
   return (
-    <div className="">
+    <div>
       {loading ? (
         <div className="text-danger">Loading</div>
       ) : (
-        // <Filter data={parameter}></Filter>
-
-        <Nav data={parameter} />
+        <Nav data={parameter} main={main} />
       )}
-      {/* <button id="initializeButton" onClick={getParameter} className="btn btn-primary">
-          Initialize Extensions API
-        </button> */}
     </div>
   )
 }

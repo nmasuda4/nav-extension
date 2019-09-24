@@ -1,53 +1,34 @@
 const e = React.createElement
 const useState = React.useState
-const useEffect = React.useEffect
-const { Tree, Icon } = antd
-const { TreeNode } = Tree
+const { Switch } = antd
 
 /* global tableau */
 
-// we need views, names, icons, top or side
-
 const Config = () => {
-  const [loading, setLoading] = useState(true)
-  const [views, setViews] = useState([1, 2, 3])
+  // const [main, setMain] = useState(true)
 
-  useEffect(() => {
+  function onChange(checked) {
+    console.log(`switch to ${checked}`)
     tableau.extensions.initializeDialogAsync().then(() => {
-      const list1 = []
-      const promises = tableau.extensions.dashboardContent.dashboard
-        .getParametersAsync()
-        .then(d => {
-          d.map(parameter => {
-            if (parameter.name === "Dashboard") {
-              return parameter.allowableValues.allowableValues.map(option => {
-                return list1.push(option.formattedValue)
-              })
-            }
-          })
-        })
+      // tableau.extensions.settings.set("collapsed", !checked)
+      // setMain(!checked)
 
-      // Wait for all requests, and then setData
-      promises.then(() => {
-        tableau.extensions.settings.set("views", list1)
+      tableau.extensions.settings.set("main", checked)
 
-        // console.log("views", tableau.extensions.settings.get("views"));
-        console.log("list1", list1)
-        setLoading(false)
-        setViews(list1)
-      })
+      tableau.extensions.settings.saveAsync()
     })
-  }, [])
+  }
 
-  return loading ? (
-    <div>Loading...</div>
-  ) : (
+  return (
     <div>
-      list
-      {views.map(d => {
-        return <p>{d}</p>
-      })}
-      return ( )
+      <div>
+        <h3>Main?</h3>
+        <Switch
+          defaultChecked
+          onChange={onChange}
+          checkedChildren={"true"}
+        ></Switch>
+      </div>
     </div>
   )
 }

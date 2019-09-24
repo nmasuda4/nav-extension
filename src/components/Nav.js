@@ -1,14 +1,15 @@
 import React, { useState } from "react"
 import { Layout, Menu, Icon } from "antd"
-import "antd/dist/antd.css"
-import Logo from "../HRlogo.png"
+import Logo from "../HRLogo.png"
+import LogoCollapsed from "../HRLogoCollapsed.png"
+import MenuItem from "antd/lib/menu/MenuItem"
 
 const { Sider } = Layout
 const { SubMenu } = Menu
 
 /* global tableau */
 
-const Nav = ({ data }) => {
+const Nav = ({ data, main }) => {
   console.log("data", data)
 
   function onChange(e, all) {
@@ -27,7 +28,6 @@ const Nav = ({ data }) => {
 
       let extensionName = ["Nav"]
       let keepName = [e.key]
-      // let views = ["1", "2", "3", "101", "102"]
       let extensionVisibilityObject = {}
 
       tableau.extensions.dashboardContent.dashboard.objects.forEach(function(
@@ -62,78 +62,134 @@ const Nav = ({ data }) => {
 
   console.log("item", item)
 
-  const modifiedData = data.filter(d => d !== "Summary")
+  const primary = [
+    { name: "Summary", icon: "fund" },
+    { name: "Profile", icon: "user" },
+    { name: "List", icon: "table" },
+    { name: "Methodology", icon: "setting" }
+  ]
+  const secondary = [
+    // { primary: "Summary", name: "Summary" },
+    // { primary: "Profile", name: "Demographics" },
+    // { primary: "Profile", name: "Preferences" }
+    // { primary: "List", name: "List" }
+  ]
+  const ternary = [{ secondary: "Preferences", name: "Survey 1" }]
+
+  const format = []
+  primary.map(d => format.push({ name: d.name, icon: d.icon, options: [] }))
+
+  secondary.map(d => {
+    format.map(g => {
+      if (g.name === d.primary)
+        return g.options.push({ name: d.name, options: [] })
+    })
+  })
+
+  format.map(d => {
+    d.options.map(g => {
+      ternary.map(h => {
+        if (h.secondary === g.name) return g.options.push(h.name)
+      })
+    })
+  })
+
+  // const modifiedData = data.filter(d => mainCategories.includes(d))
   const hasSummary = data.includes("Summary")
 
-  console.log("modifiedData", modifiedData)
+  // console.log("modifiedData", modifiedData)
   console.log("hasSummary", hasSummary)
-  const format = [
-    { name: "Constructs", options: modifiedData }
-    // { name: 2, options: [101, 102] }
-  ]
+  // const format = [
+  //   { name: "Constructs", options: modifiedData }
+  //   // { name: 2, options: [101, 102] }
+  // ]
 
   return (
     <Layout style={{ minHeight: "100vh", height: "100vh" }}>
       <Sider
-        width={280}
         style={{
           height: "100%",
           display: "flex",
           flexDirection: "column"
         }}
         theme="dark"
+        main={main}
+        collapsedWidth={60}
       >
-        <img
-          src={Logo}
-          alt="website logo"
-          width="135"
-          height="30"
-          className="d-flex justify-content-center align-items-center"
-          style={{ margin: "10px" }}
-        />
+        {main ? (
+          <img
+            src={LogoCollapsed}
+            alt="website logo"
+            // width={collapsed ? "40" : "135"}
+            height={"30"}
+            style={{
+              margin: "10px auto",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          />
+        ) : null}
         <Menu
           theme="dark"
           onClick={onChange}
           all={data}
-          selectedKeys={item}
+          // selectedKeys={item}
+          selectable
           mode="inline"
-          defaultSelectedKeys={["Summary"]}
-          style={{ flexGrow: 1, height: "100%" }}
+          // defaultSelectedKeys={["Summary"]}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            width: 60
+          }}
         >
-          {hasSummary ? (
-            <Menu.Item key="Summary">
-              <Icon type="fund" theme="filled" style={{ fontSize: "18px" }} />
-              <span>Summary</span>
-            </Menu.Item>
-          ) : null}
-
-          {format.map(d => {
+          {primary.map((d, i) => {
             return (
-              <SubMenu
+              <Menu.Item
                 key={d.name}
-                title={
-                  <span>
-                    <Icon
-                      type="tags"
-                      theme="filled"
-                      style={{ fontSize: "18px" }}
-                    />
-                    <span>{d.name}</span>
-                  </span>
-                }
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                  marginTop:
+                    i === primary.length - 1 ? "auto" : i === 0 ? "20px" : "0px"
+                }}
               >
-                {d.options.map((f, i) => {
-                  return (
-                    <Menu.Item key={f} style={{ paddingLeft: "18px" }}>
-                      <span>{f}</span>
-                    </Menu.Item>
-                  )
-                })}
-              </SubMenu>
+                <Icon type={d.icon} />
+                <span>{d.name}</span>
+              </Menu.Item>
             )
+            // (
+            //   <SubMenu
+            //     key={d.name}
+            //     title={
+            //       <span>
+            //         <Icon
+            //           type={d.icon}
+            //           theme="outlined"
+            //           style={{ fontSize: "14px" }}
+            //         />
+            //         <span>{d.name}</span>
+            //       </span>
+            //     }
+            //   >
+            //     {d.options.map(g => {
+            //       return (
+            //         <Menu.ItemGroup key={g.name} title={g.name}>
+            //           {g.options.map(h => {
+            //             return <Menu.Item key={h}>{h}</Menu.Item>
+            //           })}
+            //         </Menu.ItemGroup>
+            //       )
+            //     })}
+            //   </SubMenu>
+            // )
           })}
         </Menu>
-        <p
+        {/* <p
           style={{
             color: "#bcbbbb",
             backgroundColor: "transparent",
@@ -141,10 +197,40 @@ const Nav = ({ data }) => {
           }}
         >
           Copyright © 2019 Hanover Research
-        </p>
+        </p> */}
       </Sider>
     </Layout>
   )
 }
 
 export default Nav
+
+// {d.options.map((f, i) => {
+//   return (
+//     <SubMenu
+//     key={d.name}
+//     title={
+//       <span>
+//         <Icon
+//           type="tags"
+//           theme="filled"
+//           style={{ fontSize: "9px" }}
+//         />
+//         <span>{d.name}</span>
+//       </span>
+//     }
+//   >
+//     {d.options.map((f, i) => {
+//       return (
+//         <Menu.Item key={f} style={{ paddingLeft: "18px" }}>
+//           <span>{f}</span>
+//         </Menu.Item>
+//       )
+//     })}
+//   </SubMenu>
+
+//     <Menu.Item key={f} style={{ paddingLeft: "18px" }}>
+//       <span>{f}</span>
+//     </Menu.Item>
+//   )
+// })}
