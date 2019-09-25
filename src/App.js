@@ -6,10 +6,9 @@ import Nav from "./components/Nav"
 
 const App = () => {
   const [loading, setLoading] = useState(true)
-  const [parameter, setParameter] = useState([])
-  const [main, setMain] = useState([])
+  const [dashboard, setDashboard] = useState([])
+  const [profile, setProfile] = useState([])
   const [height, setHeight] = useState()
-  console.log("hello")
 
   // function configure() {
   //   const popupUrl = "http://localhost:4000/config.html"
@@ -30,19 +29,25 @@ const App = () => {
 
   useEffect(() => {
     tableau.extensions.initializeAsync().then(() => {
-      // clear old views
-      tableau.extensions.settings.erase("views")
-      tableau.extensions.settings.erase("main")
+      tableau.extensions.settings.erase("dashboard")
+      tableau.extensions.settings.erase("profile")
+
       const containerHeight =
         tableau.extensions.dashboardContent.dashboard.size.height
-      const list = []
+      const dashboard = []
+      const profile = []
+
       const promises = tableau.extensions.dashboardContent.dashboard
         .getParametersAsync()
         .then(d => {
           return d.map(parameter => {
             if (parameter.name === "Dashboard") {
               return parameter.allowableValues.allowableValues.map(option => {
-                return list.push(option.formattedValue)
+                return dashboard.push(option.formattedValue)
+              })
+            } else if (parameter.name === "Profile") {
+              return parameter.allowableValues.allowableValues.map(option => {
+                return profile.push(option)
               })
             }
           })
@@ -50,23 +55,24 @@ const App = () => {
 
       // Wait for all requests, and then setData
       promises.then(() => {
-        console.log("list", list)
-        tableau.extensions.settings.set("views", list)
-
+        tableau.extensions.settings.set("dashboard", dashboard)
+        tableau.extensions.settings.set("profile", profile)
+        console.log("dashboard", dashboard)
+        console.log("profile", profile)
+        setDashboard(dashboard)
+        setProfile(profile)
         setLoading(false)
-        setParameter(list)
         setHeight(containerHeight)
       })
     })
   }, [])
-  // }
 
   return (
     <div>
       {loading ? (
         <div className="text-danger">Loading</div>
       ) : (
-        <Nav data={parameter} height={height} />
+        <Nav dashboard={dashboard} profile={profile} height={height} />
       )}
     </div>
   )

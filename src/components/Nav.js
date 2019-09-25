@@ -9,52 +9,80 @@ const { SubMenu } = Menu
 
 /* global tableau */
 
-const Nav = ({ data, height }) => {
-  console.log("data", data)
-  console.log("height", height)
-
+const Nav = ({ dashboard, profile, height }) => {
   function onChange(e) {
-    // parameter
     tableau.extensions.initializeAsync().then(() => {
-      tableau.extensions.dashboardContent.dashboard.objects.forEach(function(
-        object
-      ) {
-        console.log(object.name + ":" + object.id + ":" + object.isVisible)
+      // tableau.extensions.dashboardContent.dashboard.objects.forEach(function(
+      //   object
+      // ) {
+      //   console.log(
+      //     object.name +
+      //       ":" +
+      //       object.id +
+      //       ":" +
+      //       object.isVisible +
+      //       ":" +
+      //       object.type
+      //   )
+      // })
+
+      const profile = tableau.extensions.settings.get("profile").map(d => {
+        return d._formattedValue
       })
-
-      const views = tableau.extensions.settings.get("views")
-
-      console.log("get", views)
 
       let extensionName = ["Nav"]
       let keepName = [e.key]
+      let dash = tableau.extensions.dashboardContent.dashboard
       let extensionVisibilityObject = {}
+      const currentProfile = []
 
-      tableau.extensions.dashboardContent.dashboard.objects.forEach(function(
-        object
-      ) {
-        if (views.includes(object.name)) {
-          if (
-            keepName.includes(object.name) ||
-            extensionName.includes(object.name)
-          ) {
-            // show
-            extensionVisibilityObject[object.id] =
-              tableau.ZoneVisibilityType.Show
-          } else {
-            // hide
-            extensionVisibilityObject[object.id] =
-              tableau.ZoneVisibilityType.Hide
+      const promises = dash.findParameterAsync("Profile").then(parameter => {
+        dash.objects.forEach(function(obj) {
+          if (obj.name == parameter.currentValue._formattedValue) {
+            return currentProfile.push(obj.id)
           }
-        }
+        })
       })
 
-      tableau.extensions.dashboardContent.dashboard
-        .setZoneVisibilityAsync(extensionVisibilityObject)
-        .then(() => {
-          console.log("done")
+      console.log("currentProfile", currentProfile)
+      promises.then(() => {
+        tableau.extensions.dashboardContent.dashboard.objects.forEach(function(
+          object
+        ) {
+          if (
+            dashboard.includes(object.name) ||
+            profile.includes(object.name)
+          ) {
+            if (
+              keepName.includes(object.name) ||
+              extensionName.includes(object.name)
+            ) {
+              // show
+              extensionVisibilityObject[object.id] =
+                tableau.ZoneVisibilityType.Show
+            } else {
+              // hide
+              extensionVisibilityObject[object.id] =
+                tableau.ZoneVisibilityType.Hide
+            }
+          }
+
+          if (keepName.includes("Profile")) {
+            console.log("id", currentProfile)
+
+            extensionVisibilityObject[currentProfile[0]] =
+              tableau.ZoneVisibilityType.Show
+          }
         })
-      setItem([e.key])
+
+        console.log("obj", extensionVisibilityObject)
+        tableau.extensions.dashboardContent.dashboard
+          .setZoneVisibilityAsync(extensionVisibilityObject)
+          .then(() => {
+            console.log("done")
+          })
+        setItem([e.key])
+      })
     })
   }
 
@@ -96,7 +124,7 @@ const Nav = ({ data, height }) => {
         <Menu
           theme="dark"
           onClick={onChange}
-          all={data}
+          // all={data}
           inlineCollapsed={true}
           // selectedKeys={item}
           selectable
