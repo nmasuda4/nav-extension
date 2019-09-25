@@ -1,8 +1,6 @@
 import React, { useState } from "react"
 import { Layout, Menu, Icon } from "antd"
-import Logo from "../HRLogo.png"
 import LogoCollapsed from "../HRLogoCollapsed.png"
-import MenuItem from "antd/lib/menu/MenuItem"
 
 const { Sider } = Layout
 const { SubMenu } = Menu
