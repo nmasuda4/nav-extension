@@ -96,7 +96,9 @@ const Nav = ({ dashboard, profile, height }) => {
   ]
 
   return (
-    <Layout style={{ maxHeight: `${height - 52}px` }}>
+    <Layout
+      style={{ height: "100vh", margin: "0px", backgroundColor: "white" }}
+    >
       <Sider
         style={{
           height: `${height - 52}px`,
