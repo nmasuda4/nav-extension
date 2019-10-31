@@ -10,19 +10,19 @@ const { SubMenu } = Menu
 const Nav = ({ dashboard, profile, height }) => {
   function onChange(e) {
     tableau.extensions.initializeAsync().then(() => {
-      // tableau.extensions.dashboardContent.dashboard.objects.forEach(function(
-      //   object
-      // ) {
-      //   console.log(
-      //     object.name +
-      //       ":" +
-      //       object.id +
-      //       ":" +
-      //       object.isVisible +
-      //       ":" +
-      //       object.type
-      //   )
-      // })
+      tableau.extensions.dashboardContent.dashboard.objects.forEach(function(
+        object
+      ) {
+        console.log(
+          object.name +
+            ":" +
+            object.id +
+            ":" +
+            object.isVisible +
+            ":" +
+            object.type
+        )
+      })
 
       const profile = tableau.extensions.settings.get("profile").map(d => {
         return d._formattedValue
@@ -36,7 +36,7 @@ const Nav = ({ dashboard, profile, height }) => {
 
       const promises = dash.findParameterAsync("Profile").then(parameter => {
         dash.objects.forEach(function(obj) {
-          if (obj.name == parameter.currentValue._formattedValue) {
+          if (obj.name === parameter.currentValue._formattedValue) {
             return currentProfile.push(obj.id)
           }
         })
@@ -49,7 +49,8 @@ const Nav = ({ dashboard, profile, height }) => {
         ) {
           if (
             dashboard.includes(object.name) ||
-            profile.includes(object.name)
+            profile.includes(object.name) ||
+            object.name === "Characteristics"
           ) {
             if (
               keepName.includes(object.name) ||
@@ -126,10 +127,10 @@ const Nav = ({ dashboard, profile, height }) => {
           onClick={onChange}
           // all={data}
           inlineCollapsed={true}
-          // selectedKeys={item}
+          selectedKeys={item}
           selectable
           mode="inline"
-          // defaultSelectedKeys={["Summary"]}
+          defaultSelectedKeys={["Summary"]}
           style={{
             display: "flex",
             flexDirection: "column",
