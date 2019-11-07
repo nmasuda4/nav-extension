@@ -152,7 +152,7 @@ const Nav = ({ dashboard, profile, height }) => {
                 }}
               >
                 <Icon type={d.icon} />
-                <span>{d.name}</span>
+                {/* <span>{d.name}</span> */}
               </Menu.Item>
             )
           })}
