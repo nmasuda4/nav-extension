@@ -38,6 +38,6 @@
   }
 }
 
-.anticon svg {
+.ant-tooltip-open {
   opacity: 0 !important;
 }
