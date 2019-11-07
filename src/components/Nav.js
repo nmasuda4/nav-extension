@@ -142,6 +142,7 @@ const Nav = ({ dashboard, profile, height }) => {
             return (
               <Menu.Item
                 key={d.name}
+                title={}
                 style={{
                   display: "flex",
                   justifyContent: "center",
