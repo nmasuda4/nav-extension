@@ -38,6 +38,6 @@
   }
 }
 
-.ant-tooltip-open {
+.ant-tooltip-open .anticon + span {
   opacity: 0 !important;
 }
