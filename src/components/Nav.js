@@ -142,7 +142,6 @@ const Nav = ({ dashboard, profile, height }) => {
             return (
               <Menu.Item
                 key={d.name}
-                title={}
                 style={{
                   display: "flex",
                   justifyContent: "center",
@@ -153,7 +152,13 @@ const Nav = ({ dashboard, profile, height }) => {
                 }}
               >
                 <Icon type={d.icon} />
-                {/* <span>{d.name}</span> */}
+                <span
+                  style={{
+                    background: "green"
+                  }}
+                >
+                  {d.name}
+                </span>
               </Menu.Item>
             )
           })}
