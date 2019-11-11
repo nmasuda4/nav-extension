@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Spinner } from "antd"
+import { Spin } from "antd"
 import "./App.css"
 import Nav from "./components/Nav"
 
@@ -71,7 +71,7 @@ const App = () => {
   return (
     <div>
       {loading ? (
-        <Spinner></Spinner>
+        <Spin></Spin>
       ) : (
         <Nav dashboard={dashboard} profile={profile} height={height} />
       )}
