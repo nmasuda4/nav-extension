@@ -69,7 +69,9 @@ const Nav = ({ dashboard, profile, height }) => {
           if (keepName.includes("Profile")) {
             console.log("id", currentProfile)
 
-            extensionVisibilityObject[currentProfile[0]] =
+            // extensionVisibilityObject[currentProfile[0]] =
+            //   tableau.ZoneVisibilityType.Show
+            extensionVisibilityObject["Profile"] =
               tableau.ZoneVisibilityType.Show
           }
         })
