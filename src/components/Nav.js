@@ -67,11 +67,9 @@ const Nav = ({ dashboard, profile, height }) => {
           }
 
           if (keepName.includes("Profile")) {
-            console.log("id", currentProfile)
+            console.log("id", currentProfile[0])
 
-            // extensionVisibilityObject[currentProfile[0]] =
-            //   tableau.ZoneVisibilityType.Show
-            extensionVisibilityObject["Characteristics"] =
+            extensionVisibilityObject[currentProfile[0]] =
               tableau.ZoneVisibilityType.Show
           }
         })
@@ -128,7 +126,7 @@ const Nav = ({ dashboard, profile, height }) => {
           theme="dark"
           onClick={onChange}
           // all={data}
-          inlineCollapsed={true}
+          // inlineCollapsed={true}
           selectedKeys={item}
           selectable
           mode="inline"
