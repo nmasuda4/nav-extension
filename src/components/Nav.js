@@ -71,7 +71,7 @@ const Nav = ({ dashboard, profile, height }) => {
 
             // extensionVisibilityObject[currentProfile[0]] =
             //   tableau.ZoneVisibilityType.Show
-            extensionVisibilityObject["Profile"] =
+            extensionVisibilityObject["Characteristics"] =
               tableau.ZoneVisibilityType.Show
           }
         })
