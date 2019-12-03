@@ -50,7 +50,7 @@ const Nav = ({ dashboard, profile, height }) => {
           if (
             dashboard.includes(object.name) ||
             profile.includes(object.name) ||
-            object.name === "Characteristics"
+            object.name === "Understand"
           ) {
             if (
               keepName.includes(object.name) ||
