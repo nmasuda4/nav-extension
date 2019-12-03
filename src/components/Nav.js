@@ -163,15 +163,7 @@ const Nav = ({ dashboard, profile, height }) => {
             )
           })}
         </Menu>
-        {/* <p
-          style={{
-            color: "#bcbbbb",
-            backgroundColor: "transparent",
-            fontSize: "11px"
-          }}
-        >
-          Copyright © 2019 Hanover Research
-        </p> */}
+      
       </Sider>
     </Layout>
   )

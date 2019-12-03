@@ -11,23 +11,6 @@ const App = () => {
   const [profile, setProfile] = useState([])
   const [height, setHeight] = useState()
 
-  // function configure() {
-  //   const popupUrl = "http://localhost:4000/config.html"
-  //   let defaultPayload = ""
-  //   tableau.extensions.ui
-  //     .displayDialogAsync(popupUrl, defaultPayload, { height: 400, width: 600 })
-  //     .then(closePayload => {})
-  //     .catch(error => {
-  //       switch (error.errorCode) {
-  //         case tableau.ErrorCodes.DialogClosedByUser:
-  //           console.log("Dialog was closed by user")
-  //           break
-  //         default:
-  //           console.error(error.message)
-  //       }
-  //     })
-  // }
-
   useEffect(() => {
     tableau.extensions.initializeAsync().then(() => {
       tableau.extensions.settings.erase("dashboard")
