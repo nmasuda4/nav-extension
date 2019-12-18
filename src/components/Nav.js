@@ -163,7 +163,6 @@ const Nav = ({ dashboard, profile, height }) => {
             )
           })}
         </Menu>
-      
       </Sider>
     </Layout>
   )
