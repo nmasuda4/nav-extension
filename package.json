@@ -2,7 +2,7 @@
   "name": "filter-extension",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://tableau.hanoverresearch.com/desktop/extensions/nav_build",
+  // "homepage": "https://tableau.hanoverresearch.com/desktop/extensions/nav_build",
   "dependencies": {
     "antd": "^3.23.2",
     "react": "^16.9.0",
