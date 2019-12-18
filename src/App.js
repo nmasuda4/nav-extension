@@ -53,11 +53,11 @@ const App = () => {
 
   return (
     <div>
-      {/* {loading ? (
+      {loading ? (
         <Spin></Spin>
-      ) : ( */}
-      <Nav dashboard={dashboard} profile={profile} height={height} />
-      {/* )} */}
+      ) : (
+        <Nav dashboard={dashboard} profile={profile} height={height} />
+      )}
     </div>
   )
 }
