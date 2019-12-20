@@ -57,7 +57,8 @@ const App = () => {
       {loading ? (
         <Spin></Spin>
       ) : (
-        <Nav dashboard={dashboard} profile={profile} height={height} />
+        <div>Test</div>
+        //<Nav dashboard={dashboard} profile={profile} height={height} />
       )}
     </div>
   )
