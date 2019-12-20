@@ -4,6 +4,7 @@ import "./App.css"
 import Nav from "./components/Nav"
 
 /* global tableau */
+const { tableau } = window
 
 const App = () => {
   const [loading, setLoading] = useState(true)
