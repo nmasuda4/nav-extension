@@ -22,21 +22,20 @@ const App = () => {
       const dashboard = []
       const profile = []
 
-      const promises = tableau.extensions.dashboardContent.dashboard
-        .getParametersAsync()
-        .then(d => {
-          return d.map(parameter => {
-            if (parameter.name === "Dashboard") {
-              return parameter.allowableValues.allowableValues.map(option => {
-                return dashboard.push(option.formattedValue)
-              })
-            } else if (parameter.name === "Profile") {
-              return parameter.allowableValues.allowableValues.map(option => {
-                return profile.push(option)
-              })
-            }
-          })
-        })
+      const promises = tableau.extensions.dashboardContent.dashboard.getParametersAsync()
+      // .then(d => {
+      //   return d.map(parameter => {
+      //     if (parameter.name === "Dashboard") {
+      //       return parameter.allowableValues.allowableValues.map(option => {
+      //         return dashboard.push(option.formattedValue)
+      //       })
+      //     } else if (parameter.name === "Profile") {
+      //       return parameter.allowableValues.allowableValues.map(option => {
+      //         return profile.push(option)
+      //       })
+      //     }
+      //   })
+      // })
 
       // Wait for all requests, and then setData
       promises.then(() => {
@@ -44,8 +43,8 @@ const App = () => {
         // tableau.extensions.settings.set("profile", profile)
         // console.log("dashboard", dashboard)
         // console.log("profile", profile)
-        setDashboard(dashboard)
-        setProfile(profile)
+        // setDashboard(dashboard)
+        // setProfile(profile)
         setLoading(false)
         // setHeight(containerHeight)
       })
