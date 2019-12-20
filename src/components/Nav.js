@@ -3,11 +3,12 @@ import { Layout, Menu, Icon } from "antd"
 import LogoCollapsed from "../HRLogoCollapsed.png"
 
 const { Sider } = Layout
-const { SubMenu } = Menu
 
 /* global tableau */
 
 const Nav = ({ dashboard, profile, height }) => {
+  console.log("profile", profile)
+
   function onChange(e) {
     tableau.extensions.initializeAsync().then(() => {
       tableau.extensions.dashboardContent.dashboard.objects.forEach(function(
@@ -24,7 +25,7 @@ const Nav = ({ dashboard, profile, height }) => {
         )
       })
 
-      const profile = tableau.extensions.settings.get("profile").map(d => {
+      const profileViews = profile.map(d => {
         return d._formattedValue
       })
 
@@ -49,7 +50,7 @@ const Nav = ({ dashboard, profile, height }) => {
         ) {
           if (
             dashboard.includes(object.name) ||
-            profile.includes(object.name) ||
+            profileViews.includes(object.name) ||
             object.name === "Understand"
           ) {
             if (

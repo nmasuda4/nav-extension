@@ -13,11 +13,12 @@ const App = () => {
 
   useEffect(() => {
     tableau.extensions.initializeAsync().then(() => {
-      tableau.extensions.settings.erase("dashboard")
-      tableau.extensions.settings.erase("profile")
+      // tableau.extensions.settings.erase("dashboard")
+      // tableau.extensions.settings.erase("profile")
 
       const containerHeight =
         tableau.extensions.dashboardContent.dashboard.size.height
+
       const dashboard = []
       const profile = []
 
@@ -39,10 +40,10 @@ const App = () => {
 
       // Wait for all requests, and then setData
       promises.then(() => {
-        tableau.extensions.settings.set("dashboard", dashboard)
-        tableau.extensions.settings.set("profile", profile)
-        console.log("dashboard", dashboard)
-        console.log("profile", profile)
+        // tableau.extensions.settings.set("dashboard", dashboard)
+        // tableau.extensions.settings.set("profile", profile)
+        // console.log("dashboard", dashboard)
+        // console.log("profile", profile)
         setDashboard(dashboard)
         setProfile(profile)
         setLoading(false)
