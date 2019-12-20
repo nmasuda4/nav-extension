@@ -16,8 +16,8 @@ const App = () => {
       // tableau.extensions.settings.erase("dashboard")
       // tableau.extensions.settings.erase("profile")
 
-      const containerHeight =
-        tableau.extensions.dashboardContent.dashboard.size.height
+      // const containerHeight =
+      //   tableau.extensions.dashboardContent.dashboard.size.height
 
       const dashboard = []
       const profile = []
@@ -47,7 +47,7 @@ const App = () => {
         setDashboard(dashboard)
         setProfile(profile)
         setLoading(false)
-        setHeight(containerHeight)
+        // setHeight(containerHeight)
       })
     })
   }, [])
