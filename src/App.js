@@ -37,7 +37,7 @@ const App = () => {
           })
         })
 
-      // Wait for all requests, and then setData
+      // Wait for all requests, and then setData s
       promises.then(() => {
         tableau.extensions.settings.set("dashboard", dashboard)
         tableau.extensions.settings.set("profile", profile)
