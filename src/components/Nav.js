@@ -94,7 +94,7 @@ const Nav = ({ dashboard, profile, height }) => {
     { name: "Summary", icon: "fund" },
     { name: "Profile", icon: "user" },
     { name: "List", icon: "table" },
-    { name: "Methodology", icon: "setting" }
+    { name: "Methodology", icon: "tool" }
   ]
 
   return (
