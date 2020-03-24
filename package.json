@@ -15,6 +15,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "homepage": "https://www.hanoverresearch.com/extensions/hea_nav_build",
   "eslintConfig": {
     "extends": "react-app"
   },

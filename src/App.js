@@ -54,7 +54,7 @@ const App = () => {
   return (
     <div>
       {loading ? (
-        <Spin></Spin>
+        <div></div>
       ) : (
         <Nav dashboard={dashboard} profile={profile} height={height} />
       )}

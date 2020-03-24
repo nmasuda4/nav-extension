@@ -126,8 +126,7 @@ const Nav = ({ dashboard, profile, height }) => {
         <Menu
           theme="dark"
           onClick={onChange}
-          // all={data}
-          // inlineCollapsed={true}
+
           selectedKeys={item}
           selectable
           mode="inline"
