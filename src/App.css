@@ -38,8 +38,8 @@
   }
 }
 
-.ant-tooltip-inner {
-  color: none !important;
+.ant-tooltip-placement-right > .ant-tooltip-content > .ant-tooltip-inner {
+  color: white !important;
   background-color: none !important;
   opacity: 0 !important;
 }
@@ -91,7 +91,24 @@
 }
 
 .secondary {
-  width: 100%;
+  width: 100% !important;
+  height: 100vh !important;
+}
+
+.WarningChart {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+}
+
+.WarningIcon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .subnav li:first-child {
@@ -101,3 +118,132 @@
 /* .subnav ul > .ant-menu-submenu {
   padding-left: 36px !important;
 } */
+
+.ant-spin {
+  flex-direction: column;
+}
+
+/* TABLE CSS */
+
+.smallFont .ant-table {
+  font-size: 12px;
+}
+
+.ant-table-filter-dropdown .ant-dropdown-menu-without-submenu {
+  max-height: 360px;
+}
+
+.xhide .ant-table-body {
+  overflow-x: hidden !important;
+}
+
+.yhide .ant-table-body {
+  overflow-y: hidden !important;
+}
+
+#header {
+  margin: 0px;
+  font-weight: bold;
+}
+
+#subtext {
+  font-size: 14px;
+  margin: 0px;
+}
+
+/* move icons closer to column name */
+
+.ant-table-thead > tr > th .anticon {
+  position: relative !important;
+}
+
+.ant-table-thead > tr > th .anticon > svg {
+  position: relative !important;
+  top: unset !important;
+  left: unset !important;
+}
+
+.ant-table-thead > tr > th > .ant-table-header-column {
+  margin-right: 12px !important;
+}
+
+.ant-table-thead
+  > tr
+  > th.ant-table-column-has-actions.ant-table-column-has-filters:hover
+  .anticon-filter:hover,
+.ant-table-thead
+  > tr
+  > th.ant-table-column-has-actions.ant-table-column-has-filters:hover
+  .ant-table-filter-icon:hover {
+  background: none !important;
+}
+
+.ant-table-thead
+  > tr
+  > th.ant-table-column-has-actions.ant-table-column-has-filters
+  .anticon-filter.ant-table-filter-open,
+.ant-table-thead
+  > tr
+  > th.ant-table-column-has-actions.ant-table-column-has-filters
+  .ant-table-filter-icon
+  .ant-table-filter-open {
+  background: none !important;
+}
+
+.ant-table-thead
+  > tr
+  > th.ant-table-column-has-actions.ant-table-column-has-filters
+  .anticon-filter.ant-table-filter-open,
+.ant-table-thead
+  > tr
+  > th.ant-table-column-has-actions.ant-table-column-has-filters
+  .ant-table-filter-icon.ant-table-filter-open {
+  background: none !important;
+}
+
+/* pagination position */
+.ant-pagination.ant-table-pagination.mini {
+  float: left !important;
+  margin: 16px 4px !important;
+}
+
+/* keep pagigation fixed regardless of # of rows */
+.ant-table-body {
+  min-height: 390px;
+}
+
+.tableButtonContainer {
+  width: 100px;
+  height: 70px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.downloadbtn {
+  position: absolute;
+  top: 16px;
+  left: 64px;
+  z-index: 100;
+}
+
+#addremove > .anticon,
+#download > .anticon,
+#clear > .anticon,
+.ant-pagination-item-link > .anticon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.ant-btn > i {
+  display: inline-flex;
+}
+
+.test {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px !important;
+}

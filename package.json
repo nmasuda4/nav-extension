@@ -4,9 +4,12 @@
   "private": true,
   "dependencies": {
     "antd": "^3.23.2",
+    "file-saver": "^2.0.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "react-scripts": "3.1.1"
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.1.1",
+    "xlsx": "^0.15.6"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -14,7 +17,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "homepage": "https://www.hanoverresearch.com/extensions/hea_nav_build",
+  "homepage": "https://www.hanoverresearch.com/extensions/hea_master",
   "eslintConfig": {
     "extends": "react-app"
   },

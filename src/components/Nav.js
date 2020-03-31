@@ -2,7 +2,8 @@ import React from "react"
 import { Layout, Menu, Icon } from "antd"
 import LogoCollapsed from "../HRLogoCollapsed.png"
 import SubNav from "./SubNav"
-import CustomTable from "./CustomTable"
+import WarningSummary from "./WarningSummary"
+import IndividualView from "./IndividualView"
 
 const { Sider } = Layout
 
@@ -14,6 +15,7 @@ const primary = [
 ]
 
 const Nav = ({
+  phase,
   view,
   sheets,
   height,
@@ -21,11 +23,14 @@ const Nav = ({
   onSubViewChange,
   onOpenChange,
   openKeysState,
-  subMenuKeys
+  subMenuKeys,
+  initialListLoad,
+  setInitialListLoad,
+  tableConfig,
+  setTableConfig,
+  tableData,
+  setTableData
 }) => {
-  console.log("sheets", sheets)
-  console.log("view", view)
-
   return (
     <>
       <Layout
@@ -76,6 +81,7 @@ const Nav = ({
               return (
                 <Menu.Item
                   key={d.name}
+                  id={d.name}
                   style={{
                     display: "flex",
                     justifyContent: "center",
@@ -99,15 +105,30 @@ const Nav = ({
       </Layout>
       <div className='secondary'>
         <p className='view'>{`${view}`}</p>
+        {view[0] === "Summary" ? (
+          <WarningSummary phase={phase}></WarningSummary>
+        ) : null}
         {view[0] === "Persona" ? (
           <SubNav
+            phase={phase}
             onChange={onSubViewChange}
             onOpenChange={onOpenChange}
             openKeysState={openKeysState}
             subMenuKeys={subMenuKeys}
           ></SubNav>
         ) : null}
-        {view[0] === "Individual" ? <CustomTable></CustomTable> : null}
+        {view[0] === "Individual" ? (
+          <IndividualView
+            initialListLoad={initialListLoad}
+            setInitialListLoad={setInitialListLoad}
+            tableConfig={tableConfig}
+            setTableConfig={setTableConfig}
+            tableData={tableData}
+            setTableData={setTableData}
+          ></IndividualView>
+        ) : (
+          <div style={{ width: "100px" }}></div>
+        )}
       </div>
     </>
   )
