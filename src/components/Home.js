@@ -20,35 +20,34 @@ const App = () => {
   const [tableData, setTableData] = useState([])
 
   const ternary = ["Understand", "Motivate", "Communicate", "Engage"]
-  console.log(window.location.origin)
 
-  const getSettings = type =>
+  const getSettings = (type) =>
     new Promise((resolve, reject) => {
       resolve(tableau.extensions.settings.get(type))
     })
 
   useEffect(() => {
     tableau.extensions.initializeAsync({ configure: configure }).then(() => {
-      getSettings("phase").then(res => {
-        // const numericRes = parseInt(res, 10)
-        console.log("numericRes", res)
+      getSettings("phase").then((res) => {
         setPhase(res)
       })
 
       let dash = tableau.extensions.dashboardContent.dashboard
       const containerHeight = dash.size.height
 
-      const objects = dash.objects.filter(d => {
+      const objects = dash.objects.filter((d) => {
         return d.type === "blank" || d.type === "extension"
       })
 
       const skip = ["Vertical", "Horizontal", "Blank", "Nav", "Tiled"]
-      const unique = [...new Set(objects.map(d => d.name))].filter(d => {
+      const unique = [...new Set(objects.map((d) => d.name))].filter((d) => {
         return skip.indexOf(d) === -1
       })
 
+      //objects.map((d) => console.log("objects", d.name, d.id))
+
       setSheets(
-        objects.filter(d => {
+        objects.filter((d) => {
           return unique.indexOf(d.name) !== -1
         })
       )
@@ -63,7 +62,9 @@ const App = () => {
 
     const zoneVisibilityMap = {}
 
-    sheets.map(d => {
+    //sheets.map((d) => console.log("sheets", d.name, d.id))
+
+    sheets.map((d) => {
       if (d.name === e.key) {
         return (zoneVisibilityMap[d.id] = tableau.ZoneVisibilityType.Show)
       } else {
@@ -72,6 +73,10 @@ const App = () => {
     })
 
     if (e.key === "Persona") {
+      if (openKeysState.length === 0) {
+        zoneVisibilityMap[sheets.filter((d) => d.name === "Understand")[0].id] =
+          tableau.ZoneVisibilityType.Show
+      }
       dash
         .setZoneVisibilityAsync(zoneVisibilityMap)
         .then(() => setView([e.key]))
@@ -87,8 +92,8 @@ const App = () => {
 
     const zoneVisibilityMap = {}
 
-    sheets.map(d => {
-      if (d.name === e.key) {
+    sheets.map((d) => {
+      if (d.name === e.key || d.name === "Persona") {
         return (zoneVisibilityMap[d.id] = tableau.ZoneVisibilityType.Show)
       } else {
         return (zoneVisibilityMap[d.id] = tableau.ZoneVisibilityType.Hide)
@@ -101,7 +106,7 @@ const App = () => {
   // subnav
   function onOpenChange(openKeys) {
     const latestOpenKey = openKeys.find(
-      key => openKeysState.indexOf(key) === -1
+      (key) => openKeysState.indexOf(key) === -1
     )
 
     if (ternary.indexOf(latestOpenKey) === -1) {
@@ -115,20 +120,18 @@ const App = () => {
   function configure() {
     let payload = ""
 
-    console.log("[Extension.js] configure Sending payload", payload)
     const popupUrl = `${window.location.origin}/extensions/hea_master/#/configure`
+    // const popupUrl = `${window.location.origin}/#/configure`
+
     tableau.extensions.ui
       .displayDialogAsync(popupUrl, payload, { height: 300, width: 300 })
-      .then(closePayload => {
-        console.log("Window closed", closePayload)
+      .then((closePayload) => {
         setPhase(closePayload)
       })
-      .catch(error => {
+      .catch((error) => {
         switch (error.errorCode) {
           case tableau.ErrorCodes.DialogClosedByUser:
-            console.log("[Extension.js] Dialog was closed by user")
             // refreshSettings()
-            console.log("[Extension.js] Config window closed")
             break
           default:
             console.error("[Extension.js]", error.message)

@@ -44,7 +44,7 @@ const Nav = ({
         <Sider
           width={60}
           style={{
-            height: `${height - 52}px`,
+            // height: `${height - 52}px`,
             width: "60px",
             display: "flex",
             flexDirection: "column"
@@ -73,7 +73,6 @@ const Nav = ({
             style={{
               display: "flex",
               flexDirection: "column",
-              height: "100%",
               width: 60
             }}
           >
@@ -104,7 +103,9 @@ const Nav = ({
         </Sider>
       </Layout>
       <div className='secondary'>
-        <p className='view'>{`${view}`}</p>
+        {phase === "3" && view[0] === "Summary" ? null : (
+          <p className='view'>{`${view}`}</p>
+        )}
         {view[0] === "Summary" ? (
           <WarningSummary phase={phase}></WarningSummary>
         ) : null}

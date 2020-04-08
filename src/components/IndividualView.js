@@ -73,7 +73,16 @@ const IndividualView = ({
   }, [initialListLoad])
 
   return (
-    <div style={{ margin: "0px 0px", width: "100%" }}>
+    <div
+      style={{
+        paddingTop: "12px",
+        width: "100%"
+        // maxHeight: 400,
+        // height: 400
+        // height: 460,
+        // backgroundColor: "blue"
+      }}
+    >
       {initialListLoad ? (
         <Main tableConfig={tableConfig} tableData={tableData}></Main>
       ) : (

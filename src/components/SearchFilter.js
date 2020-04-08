@@ -13,8 +13,6 @@ const SearchFilter = ({
 }) => {
   const selectedKeys1 = selectedKeys || []
 
-  console.log("selectedKeys", selectedKeys)
-
   return (
     <div
       style={{

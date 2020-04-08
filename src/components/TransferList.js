@@ -9,7 +9,6 @@ const TransferList = ({
   handleKeyChange,
   handleSelectedChange
 }) => {
-  console.log("targetKeys", targetKeys)
   const mockData = []
   columns
     .filter(d => !d.permanent)
@@ -31,6 +30,7 @@ const TransferList = ({
         onChange={handleKeyChange}
         onSelectChange={handleSelectedChange}
         render={item => item.title}
+        showSearch
         listStyle={{
           width: 350,
           height: 350

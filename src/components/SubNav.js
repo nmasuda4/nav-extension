@@ -11,9 +11,6 @@ const SubNav = ({
   openKeysState,
   subMenuKeys
 }) => {
-  console.log("openKeysState", openKeysState)
-  console.log("subMenuKeys", subMenuKeys)
-
   const secondary = [
     { name: "Understand", icon: "pie-chart" },
     { name: "Motivate", icon: "message", options: ["21Summary", "Impact"] },

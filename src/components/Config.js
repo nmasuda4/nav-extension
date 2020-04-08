@@ -41,7 +41,6 @@ const Config = () => {
 
   const saveSettings = () =>
     new Promise((resolve, reject) => {
-      console.log("Saving settings", value)
       tableau.extensions.settings
         .saveAsync()
         .then(newSavedSettings => {
@@ -49,8 +48,6 @@ const Config = () => {
           resolve(newSavedSettings)
         })
         .catch(reject)
-
-      console.log("Saved")
     })
 
   function onSave() {

@@ -83,7 +83,7 @@
   font-family: "Calibri";
   font-size: 20px;
   font-weight: bold;
-  margin: 9px 16px;
+  margin: 8px 24px;
   color: black !important;
   /* border-bottom: 1px solid black; */
   width: 90%;
@@ -91,8 +91,8 @@
 }
 
 .secondary {
-  width: 100% !important;
-  height: 100vh !important;
+  width: 1140px !important;
+  height: 80vh !important;
 }
 
 .WarningChart {
@@ -208,13 +208,13 @@
 }
 
 /* keep pagigation fixed regardless of # of rows */
-.ant-table-body {
-  min-height: 390px;
-}
+/* .ant-table-body {
+  max-height: 400px;
+} */
 
 .tableButtonContainer {
   width: 100px;
-  height: 70px;
+  height: 40px;
   position: absolute;
   right: 10px;
   top: 10px;
@@ -237,6 +237,27 @@
   height: 100%;
 }
 
+.ant-menu-item > .anticon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.ant-menu-item > span {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+.ant-menu-submenu-title > span {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+}
+
 .ant-btn > i {
   display: inline-flex;
 }
@@ -246,4 +267,23 @@
   justify-content: center;
   align-items: center;
   height: 300px !important;
+}
+
+.ant-menu-inline-collapsed > li:last-child {
+  display: flex !important;
+  align-items: flex-end !important;
+  /* justify-content: flex-end !important; */
+}
+
+.ant-menu-inline-collapsed {
+  height: 90vh !important;
+}
+
+.scale > .ant-slider {
+  width: 100% !important;
+}
+
+.scale > p {
+  font-size: 11px;
+  margin: 4px;
 }

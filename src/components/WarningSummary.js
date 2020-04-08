@@ -4,7 +4,7 @@ import WarningChart from "../WarningChart.png"
 const WarningSummary = ({ phase }) => {
   if (phase === "1") {
     return (
-      <div style={{ height: "80%", width: "100%", padding: 8 }}>
+      <div style={{ height: "100%", width: "100%", padding: 8 }}>
         <div className='WarningChart'>
           <img
             src={WarningChart}

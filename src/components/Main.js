@@ -89,9 +89,9 @@ const Main = ({ tableConfig, tableData }) => {
 
   const handleExport = () => {
     // const columns = targetKeys.map(d => d.toLowerCase())
-    console.log("selectedKeys", selectedKeys)
-    console.log("targetKeys", targetKeys)
-    console.log("exportData", exportData)
+    // console.log("selectedKeys", selectedKeys)
+    // console.log("targetKeys", targetKeys)
+    // console.log("exportData", exportData)
 
     const finalExport = exportData.map(row => {
       const result = {}

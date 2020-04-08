@@ -1,7 +1,7 @@
 import React from "react"
 import { Icon } from "antd"
 
-const assignColumns = function(column, settings, i) {
+const assignColumns = function (column, settings, i) {
   const { properFieldName } = column
   const type = settings.Type
   const filter = settings.Filter
@@ -13,7 +13,7 @@ const assignColumns = function(column, settings, i) {
     "#FFBD9C",
     "#3C786E",
     "#FC4C02",
-    "#484E66"
+    "#484E66",
   ]
 
   function addWidth(defaultWidth) {
@@ -46,7 +46,7 @@ const assignColumns = function(column, settings, i) {
       // </div>
       //)
     } else if (filter === "Scale" || filter === "Dropdown") {
-      return text => {
+      return (text) => {
         const formattedText = text === "Null" ? "" : text
         return formattedText
       }
@@ -55,7 +55,7 @@ const assignColumns = function(column, settings, i) {
 
   function addFilterIcon() {
     if (filter === "Search") {
-      return filtered => (
+      return (filtered) => (
         <Icon
           type='search'
           style={{ color: filtered ? "#1890ff" : undefined }}
@@ -67,8 +67,8 @@ const assignColumns = function(column, settings, i) {
   function addCustomSort() {
     const temp = settings.Sort.split("|")
     const sort =
-      temp.length !== 1
-        ? settings.Sort.split("|").map(function(item) {
+      temp.length !== 0
+        ? settings.Sort.split("|").map(function (item) {
             return item.trim()
           })
         : []
@@ -93,7 +93,7 @@ const assignColumns = function(column, settings, i) {
     default: settings.Default === "Yes" ? true : false,
     order: settings.Order,
     source: settings.Source.toLowerCase(),
-    colors: settings.Type === "Persona" ? tagColors : []
+    colors: settings.Type === "Persona" ? tagColors : [],
   }
 }
 
