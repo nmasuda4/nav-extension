@@ -65,13 +65,10 @@ const assignColumns = function (column, settings, i) {
   }
 
   function addCustomSort() {
-    const temp = settings.Sort.split("|")
-    const sort =
-      temp.length !== 0
-        ? settings.Sort.split("|").map(function (item) {
-            return item.trim()
-          })
-        : []
+    const sort = settings.Sort.split("|").map(function (item) {
+      return item.trim()
+    })
+    console.log("temp", sort)
     return sort
   }
 

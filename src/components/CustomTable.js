@@ -43,22 +43,21 @@ const CustomTable = ({
         ].sort()
 
         console.log(column.Name, column.sort.length, unique)
-        if (column.sort.length !== 0) {
+        if (column.sort.length === 1 && column.sort.includes("%null%")) {
+          // for default sort
+          console.log("default", column.Name)
+          unique.map((item) => {
+            return uniqueFormatted.push({ text: item, value: item })
+          })
+        } else {
           // for custom sort
           column.sort.map((item) => {
             if (unique.includes(item)) {
               return uniqueFormatted.push({ text: item, value: item })
             }
           })
-        } else {
-          // for default sort
-          return unique.map((item) =>
-            uniqueFormatted.push({ text: item, value: item })
-          )
         }
         column.unique = uniqueFormatted
-
-        console.log(column.Name)
       }
 
       if (column.filter === "Scale") {
