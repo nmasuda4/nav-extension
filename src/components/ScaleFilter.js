@@ -12,7 +12,7 @@ const ScaleFilter = ({
   min,
   max,
   step,
-  prefix
+  prefix,
 }) => {
   console.log("min, max", column, min, max)
   function formatter(value) {
@@ -44,7 +44,7 @@ const ScaleFilter = ({
           max={max}
           step={stepFormatter(min, max)}
           defaultValue={[min, max]}
-          onChange={value => setSelectedKeys(value ? [value] : [min, max])}
+          onChange={(value) => setSelectedKeys(value ? [value] : [min, max])}
           tipFormatter={formatter}
         />
         <p className='d-flex justify-content-center align-items-center'>

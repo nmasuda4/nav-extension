@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { Table, Tooltip, Tag, Button } from "antd"
 import SearchFilter from "./SearchFilter"
 import ScaleFilter from "./ScaleFilter"
+import PrecisionFilter from "./PrecisionFilter"
 // import Highlighter from "react-highlight-words"
 import "antd/dist/antd.css"
 import "../App.css"
@@ -24,6 +25,9 @@ const CustomTable = ({
   const [searchedColumn, setSearchedColumn] = useState()
 
   useEffect(() => {
+    console.log("filteredInfo", filteredInfo)
+    console.log("dataSource", dataSource)
+
     // change only filter info, not datasource
 
     // keep only selected columns
@@ -60,7 +64,7 @@ const CustomTable = ({
         column.unique = uniqueFormatted
       }
 
-      if (column.filter === "Scale") {
+      if (column.filter === "Scale" || column.filter === "Precise") {
         const unique = [
           ...new Set(dataSource.map((h) => h[column.dataIndex])),
         ].sort()
@@ -136,7 +140,7 @@ const CustomTable = ({
       }
 
       // scale example
-      if (column.filter === "Scale") {
+      if (column.filter === "Scale" || column.filter === "Precise") {
         const prefix = uniqueFormatted[0].value[0] === "$" ? "$" : ""
         let missing = ["Null", "Na", "NA", "N/A"]
         console.log(column, uniqueFormatted)
@@ -167,22 +171,38 @@ const CustomTable = ({
           selectedKeys,
           clearFilters,
           confirm,
-        }) => (
-          <ScaleFilter
-            prefix={prefix}
-            column={column}
-            min={min}
-            max={max}
-            step={step}
-            clearFilters={clearFilters}
-            dataIndex={column.dataIndex}
-            selectedKeys={[selectedKeys]}
-            setSelectedKeys={setSelectedKeys}
-            confirm={confirm}
-            handleReset={handleReset}
-            handleSearch={handleSearch}
-          ></ScaleFilter>
-        )
+        }) =>
+          column.filter === "Scale" ? (
+            <ScaleFilter
+              prefix={prefix}
+              column={column}
+              min={min}
+              max={max}
+              step={step}
+              clearFilters={clearFilters}
+              dataIndex={column.dataIndex}
+              selectedKeys={[selectedKeys]}
+              setSelectedKeys={setSelectedKeys}
+              confirm={confirm}
+              handleReset={handleReset}
+              handleSearch={handleSearch}
+            ></ScaleFilter>
+          ) : (
+            <PrecisionFilter
+              prefix={prefix}
+              column={column}
+              min={min}
+              max={max}
+              dataIndex={column.dataIndex}
+              selectedKeys={[selectedKeys]}
+              setSelectedKeys={setSelectedKeys}
+              confirm={confirm}
+              handleReset={handleReset}
+              handleSearch={handleSearch}
+              hasFilters={hasFilters}
+              clearFilters={clearFilters}
+            ></PrecisionFilter>
+          )
       }
 
       // add persona render
@@ -223,6 +243,7 @@ const CustomTable = ({
 
   const handleChange = (pagination, filters, sorter, extra) => {
     setFilteredInfo(filters)
+    console.log("extra", extra.currentDataSource)
 
     const filterValues = Object.values(filters).map((d) => d.length !== 0) || []
     const reducer = (accumulator, currentValue) => accumulator || currentValue
@@ -274,7 +295,7 @@ const CustomTable = ({
   const handleReset = (clearFilters) => {
     clearFilters()
     setSearchText("")
-    //setHasFilters(false)
+    setHasFilters(false)
     // const temp = modifiedColumns.map(column => {
     //   column.filteredValue = []
     //   return column

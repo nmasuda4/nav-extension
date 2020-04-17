@@ -45,7 +45,11 @@ const assignColumns = function (column, settings, i) {
       //   </span>
       // </div>
       //)
-    } else if (filter === "Scale" || filter === "Dropdown") {
+    } else if (
+      filter === "Scale" ||
+      filter === "Dropdown" ||
+      filter === "Precise"
+    ) {
       return (text) => {
         const formattedText = text === "Null" ? "" : text
         return formattedText
