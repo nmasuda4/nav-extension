@@ -1,0 +1,76 @@
+(rtnJSON = {
+  "UserInfo": { "UserName": "" },
+  "DashboardDisplayName": "Brand Tracker Dashboard",
+  "Navigation": true,
+  "Tree": [
+    {
+      "ObjectType": "Report",
+      "DisplayName": "Awareness",
+      "ReportID": "9a84e842-2fef-46c6-8809-164612e5f62d",
+      "GroupID": "d4eed0cf-8db1-4e93-acdc-e3f1f6965d08",
+      "Page": "Awareness",
+      "Actions": [],
+      "Narration": []
+    },
+    {
+      "ObjectType": "Folder",
+      "DisplayName": "Preference Section",
+      "Nodes": [
+        {
+          "ObjectType": "Report",
+          "DisplayName": "Preference",
+          "ReportID": "c0d378eb-1754-4289-b520-7fcbcf9b08ce",
+          "GroupID": "d4eed0cf-8db1-4e93-acdc-e3f1f6965d08",
+          "Page": "PageName",
+          "Actions": [
+            {
+              "ActionType": "Bookmark",
+              "ActionName": "Sub Item 1 Bookmark 1",
+              "Params": { "Parm1": "33", "Param2": "etc..." }
+            }
+          ],
+          "Narration": [
+            {
+              "Title": "Key Point 1",
+              "Body": "Here is some talking points about this specific view..."
+            },
+            {
+              "Title": "Key Point 2",
+              "Body": "This is another talking point about this specific view..."
+            }
+          ]
+        },
+        {
+          "ObjectType": "Report",
+          "DisplayName": "Preference Reason",
+          "ReportID": "385e0263-3a64-40a6-879a-b196957f0b45",
+          "GroupID": "118fbe37-42eb-4472-b420-408b29f7a134",
+          "Page": "PageName",
+          "Actions": [
+            {
+              "ActionType": "Bookmark",
+              "ActionName": "Sub Item 2 Bookmark 1",
+              "Params": { "Parm1": "33", "Param2": "etc..." }
+            },
+            {
+              "ActionType": "Bookmark",
+              "ActionName": "Sub Item 2 Bookmark 2",
+              "Params": { "Parm1": "33", "Param2": "etc..." }
+            }
+          ],
+          "Narration": [{ "Title": "Narritive Card", "Body": "Lorem ...." }]
+        }
+      ]
+    },
+    {
+      "ObjectType": "Report",
+      "DisplayName": "Activities",
+      "ReportID": "db8b1205-889f-4e2f-97e6-8c626d80c05b",
+      "GroupID": "118fbe37-42eb-4472-b420-408b29f7a134",
+
+      "Page": "PageName",
+      "Actions": [],
+      "Narration": []
+    }
+  ]
+})

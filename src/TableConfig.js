@@ -76,6 +76,8 @@ const assignColumns = function (column, settings, i) {
     return sort
   }
 
+  const dataIndex = addDataIndex(properFieldName)
+
   return {
     Name: settings.Name,
     fieldname: column.fieldName,
@@ -84,10 +86,11 @@ const assignColumns = function (column, settings, i) {
     indexOriginal: i,
     filters: [],
     filterIcon: addFilterIcon(),
-    sorter: "",
+    // sorter: customSorter,
     sort: addCustomSort(),
+    sortDirections: ["descend", "ascend"],
     render: addRender(properFieldName),
-    dataIndex: addDataIndex(properFieldName),
+    dataIndex: dataIndex,
     permanent: settings.Permanent === "Yes" ? true : false,
     filter: settings.Filter,
     type: settings.Type,

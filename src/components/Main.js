@@ -20,7 +20,7 @@ const Main = ({ tableConfig, tableData }) => {
   const tempC = []
   const tempDS = []
 
-  const tableHeaders = tableConfig.map(d => d.Name)
+  const tableHeaders = tableConfig.map((d) => d.Name)
 
   var wb = XLSX.utils.book_new()
 
@@ -28,7 +28,7 @@ const Main = ({ tableConfig, tableData }) => {
     Title: "Alumni",
     Subject: "Test",
     Author: "Guest",
-    CreatedDate: new Date()
+    CreatedDate: new Date(),
   }
 
   wb.SheetNames.push("Alumni")
@@ -70,15 +70,15 @@ const Main = ({ tableConfig, tableData }) => {
     })
 
     const reducer = (accumulator, currentValue) => accumulator + currentValue
-    const active = tempC.filter(d => d.default)
+    const active = tempC.filter((d) => d.default)
 
     setWidth(
-      active.length > 0 ? active.map(d => d.width).reduce(reducer) + 200 : 200
+      active.length > 0 ? active.map((d) => d.width).reduce(reducer) + 200 : 200
     )
 
     setColumns(tempC)
     setDataSource(tempDS)
-    setTargetKeys(active.sort((a, b) => a.order - b.order).map(d => d.title))
+    setTargetKeys(active.sort((a, b) => a.order - b.order).map((d) => d.title))
     setExportData(tempDS)
     setLoading(false)
   }
@@ -93,12 +93,12 @@ const Main = ({ tableConfig, tableData }) => {
     // console.log("targetKeys", targetKeys)
     // console.log("exportData", exportData)
 
-    const finalExport = exportData.map(row => {
+    const finalExport = exportData.map((row) => {
       const result = {}
       const keys = Object.keys(row)
       targetKeys
-        .filter(d => keys.indexOf(d.toLowerCase().replace(/\s+/g, "")) !== -1)
-        .map(key => {
+        .filter((d) => keys.indexOf(d.toLowerCase().replace(/\s+/g, "")) !== -1)
+        .map((key) => {
           return (result[key] = row[key.toLowerCase().replace(/\s+/g, "")])
         })
 
@@ -109,7 +109,7 @@ const Main = ({ tableConfig, tableData }) => {
 
     var ws = XLSX.utils.json_to_sheet(finalExport, { header: test })
     wb.Sheets["Alumni"] = ws
-    var wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" })
+    var wbout = XLSX.write(wb, { bookType: "csv", type: "binary" })
     function s2ab(s) {
       var buf = new ArrayBuffer(s.length) //convert s to arrayBuffer
       var view = new Uint8Array(buf) //create uint8array as viewer
@@ -118,7 +118,7 @@ const Main = ({ tableConfig, tableData }) => {
     }
     saveAs(
       new Blob([s2ab(wbout)], { type: "application/octet-stream" }),
-      "advancement.xlsx"
+      "advancement.csv"
     )
   }
 
@@ -126,9 +126,9 @@ const Main = ({ tableConfig, tableData }) => {
     setTargetKeys(nextTargetKeys)
 
     const reducer = (accumulator, currentValue) => accumulator + currentValue
-    const active = columns.filter(d => nextTargetKeys.includes(d.title))
+    const active = columns.filter((d) => nextTargetKeys.includes(d.title))
     setWidth(
-      active.length > 0 ? active.map(d => d.width).reduce(reducer) + 200 : 200
+      active.length > 0 ? active.map((d) => d.width).reduce(reducer) + 200 : 200
     )
   }
 

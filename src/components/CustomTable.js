@@ -76,6 +76,7 @@ const CustomTable = ({
       if (column.filter === "Dropdown") {
         column.filters = uniqueFormatted
 
+        // render
         column.render = (text) => {
           const formattedText =
             text.toLowerCase() === "null" || text.toLowerCase() === "na"
@@ -84,8 +85,57 @@ const CustomTable = ({
           return formattedText
         }
 
+        // filter
         column.onFilter = (value, record) =>
           record[column.dataIndex].indexOf(value) === 0
+
+        // sort
+        // const sortByObject = column.sort.reduce(
+        //   (obj, item, index) => ({
+        //     ...obj,
+        //     [item]: index,
+        //   }),
+        //   {}
+        // )
+
+        //   column.sorter =
+        //     column.sort.length === 1 && column.sort.includes("%null%")
+        //       ? (a, b, sortOrder) => {
+        //           // without custom sort
+        //           const A = a[column.dataIndex]
+        //           const B = b[column.dataIndex]
+        //           if (A !== "Null" && B !== "Null") {
+        //             a[column.dataIndex].localeCompare(
+        //               b[column.dataIndex],
+        //               undefined,
+        //               {
+        //                 numeric: true,
+        //                 sensitivity: "base",
+        //               }
+        //             )
+        //           } else if (A === "Null") {
+        //             return sortOrder === "ascend" ? 1 : -1
+        //           } else if (B === "Null") {
+        //             return sortOrder === "ascend" ? -1 : 1
+        //           }
+        //           return 0
+        //         }
+        //       : (a, b, sortOrder) => {
+        //           // with custom sort
+        //           const A = a[column.dataIndex]
+        //           const B = b[column.dataIndex]
+        //           if (A !== "Null" && B !== "Null") {
+        //             return (
+        //               sortByObject[a[column.dataIndex]] -
+        //               sortByObject[b[column.dataIndex]]
+        //             )
+        //           } else if (A === "Null") {
+        //             return sortOrder === "ascend" ? 1 : -1
+        //           } else if (B === "Null") {
+        //             return sortOrder === "ascend" ? -1 : 1
+        //           }
+        //           return 0
+        //         }
       }
 
       // search example
@@ -96,6 +146,10 @@ const CustomTable = ({
             .toString()
             .toLowerCase()
             .includes(value.toLowerCase())
+
+        // search sort
+        // column.sorter = (a, b) =>
+        //   a[column.dataIndex].localeCompare(b[column.dataIndex])
 
         // search box filter
         column.filterDropdown = ({
@@ -164,6 +218,23 @@ const CustomTable = ({
           record[column.dataIndex].replace(/\D+/g, "") !== "" &&
           record[column.dataIndex].replace(/\D+/g, "") >= value[0] &&
           record[column.dataIndex].replace(/\D+/g, "") <= value[1]
+
+        // sort
+        // column.sorter = (a, b, sortOrder) => {
+        //   const A = a[column.dataIndex]
+        //   const B = b[column.dataIndex]
+        //   if (A !== "Null" && B !== "Null") {
+        //     return A.localeCompare(B, undefined, {
+        //       numeric: true,
+        //       sensitivity: "base",
+        //     })
+        //   } else if (A === "Null") {
+        //     return sortOrder === "ascend" ? 1 : -1
+        //   } else if (B === "Null") {
+        //     return sortOrder === "ascend" ? -1 : 1
+        //   }
+        //   return 0
+        // }
 
         // scale filter
         column.filterDropdown = ({

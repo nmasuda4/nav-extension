@@ -120,8 +120,8 @@ const App = () => {
   function configure() {
     let payload = ""
 
-    // const popupUrl = `${window.location.origin}/extensions/hea_master/#/configure`
-    const popupUrl = `${window.location.origin}/#/configure`
+    const popupUrl = `${window.location.origin}/extensions/hea_master/#/configure`
+    // const popupUrl = `${window.location.origin}/#/configure`
 
     tableau.extensions.ui
       .displayDialogAsync(popupUrl, payload, { height: 300, width: 300 })
