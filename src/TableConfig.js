@@ -14,6 +14,8 @@ const assignColumns = function (column, settings, i) {
     "#3C786E",
     "#FC4C02",
     "#484E66",
+    "#00594C",
+    "#1F2A44",
   ]
 
   function addWidth(defaultWidth) {
