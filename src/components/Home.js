@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect } from "react"
 import Nav from "./Nav"
 
 // import Main from "./components/Main"
@@ -16,8 +16,6 @@ const App = () => {
 
   //table
   const [initialListLoad, setInitialListLoad] = useState(false)
-  const [tableConfig, setTableConfig] = useState([])
-  const [tableData, setTableData] = useState([])
 
   const ternary = ["Understand", "Motivate", "Communicate", "Engage"]
 
@@ -120,8 +118,8 @@ const App = () => {
   function configure() {
     let payload = ""
 
-    const popupUrl = `${window.location.origin}/extensions/hea_master/#/configure`
-    // const popupUrl = `${window.location.origin}/#/configure`
+    // const popupUrl = `${window.location.origin}/extensions/hea_master_test2/#/configure`
+    const popupUrl = `${window.location.origin}/#/configure`
 
     tableau.extensions.ui
       .displayDialogAsync(popupUrl, payload, { height: 300, width: 300 })
@@ -157,10 +155,10 @@ const App = () => {
             subMenuKeys={subMenuKeys}
             initialListLoad={initialListLoad}
             setInitialListLoad={setInitialListLoad}
-            tableConfig={tableConfig}
-            setTableConfig={setTableConfig}
-            tableData={tableData}
-            setTableData={setTableData}
+            // tableConfig={tableConfig}
+            // setTableConfig={setTableConfig}
+            // defaultTableData={defaultTableData}
+            // setDefaultTableData={setDefaultTableData}
           />
         </div>
       )}

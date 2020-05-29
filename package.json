@@ -17,7 +17,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "homepage": "https://www.hanoverresearch.com/extensions/hea_master",
+  "homepage": "https://www.hanoverresearch.com/extensions/hea_master_test2",
   "eslintConfig": {
     "extends": "react-app"
   },

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { Layout, Menu, Icon } from "antd"
 import LogoCollapsed from "../HRLogoCollapsed.png"
 import SubNav from "./SubNav"
@@ -11,7 +11,7 @@ const primary = [
   { name: "Summary", icon: "fund" },
   { name: "Persona", icon: "user" },
   { name: "Individual", icon: "table" },
-  { name: "Methodology", icon: "tool" }
+  { name: "Methodology", icon: "tool" },
 ]
 
 const Nav = ({
@@ -26,11 +26,14 @@ const Nav = ({
   subMenuKeys,
   initialListLoad,
   setInitialListLoad,
-  tableConfig,
-  setTableConfig,
-  tableData,
-  setTableData
+  // tableConfig,
+  // setTableConfig,
+  // defaultTableData,
+  // setDefaultTableData,
 }) => {
+  const [tableConfig, setTableConfig] = useState([])
+  const [defaultTableData, setDefaultTableData] = useState([])
+
   return (
     <>
       <Layout
@@ -38,7 +41,7 @@ const Nav = ({
           height: "100vh",
           width: "60px",
           margin: "0px",
-          backgroundColor: "white"
+          backgroundColor: "white",
         }}
       >
         <Sider
@@ -47,7 +50,7 @@ const Nav = ({
             // height: `${height - 52}px`,
             width: "60px",
             display: "flex",
-            flexDirection: "column"
+            flexDirection: "column",
           }}
           theme='dark'
           collapsedWidth={60}
@@ -61,7 +64,7 @@ const Nav = ({
               margin: "10px auto",
               display: "flex",
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
             }}
           />
           <Menu
@@ -73,7 +76,7 @@ const Nav = ({
             style={{
               display: "flex",
               flexDirection: "column",
-              width: 60
+              width: 60,
             }}
           >
             {primary.map((d, i) => {
@@ -91,7 +94,7 @@ const Nav = ({
                         ? "auto"
                         : i === 0
                         ? "20px"
-                        : "0px"
+                        : "0px",
                   }}
                 >
                   <Icon type={d.icon} />
@@ -124,8 +127,8 @@ const Nav = ({
             setInitialListLoad={setInitialListLoad}
             tableConfig={tableConfig}
             setTableConfig={setTableConfig}
-            tableData={tableData}
-            setTableData={setTableData}
+            defaultTableData={defaultTableData}
+            setDefaultTableData={setDefaultTableData}
           ></IndividualView>
         ) : (
           <div style={{ width: "100px" }}></div>

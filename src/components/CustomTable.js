@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react"
-import { Table, Tooltip, Tag, Button } from "antd"
+import { Table, Tooltip, Button } from "antd"
 import SearchFilter from "./SearchFilter"
 import ScaleFilter from "./ScaleFilter"
 import PrecisionFilter from "./PrecisionFilter"
-// import Highlighter from "react-highlight-words"
 import "antd/dist/antd.css"
 import "../App.css"
 
@@ -20,23 +19,20 @@ const CustomTable = ({
   const [hasFilters, setHasFilters] = useState(false)
   const [pos, setPos] = useState({ x: 0, y: 0 })
 
-  // for search filter
-  const [searchText, setSearchText] = useState()
-  const [searchedColumn, setSearchedColumn] = useState()
-
   useEffect(() => {
-    console.log("filteredInfo", filteredInfo)
+    // console.log("filteredInfo", filteredInfo)
     console.log("dataSource", dataSource)
-
-    // change only filter info, not datasource
+    console.log("columns", columns)
+    console.log("targetKeys :>> ", targetKeys)
 
     // keep only selected columns
     const temp = columns.filter((column) => {
       return (
-        targetKeys.indexOf(column.title) !== -1 || column.permanent === "Yes"
+        targetKeys.indexOf(column.Name) !== -1 || column.permanent === "Yes"
       )
     })
 
+    console.log("temp", temp)
     temp.map((column) => {
       const uniqueFormatted = []
 
@@ -47,20 +43,20 @@ const CustomTable = ({
         ].sort()
 
         console.log(column.Name, column.sort.length, unique)
-        if (column.sort.length === 1 && column.sort.includes("%null%")) {
-          // for default sort
-          console.log("default", column.Name)
-          unique.map((item) => {
-            return uniqueFormatted.push({ text: item, value: item })
-          })
-        } else {
-          // for custom sort
-          column.sort.map((item) => {
-            if (unique.includes(item)) {
-              return uniqueFormatted.push({ text: item, value: item })
-            }
-          })
-        }
+        // if (column.sort.length === 0) {
+        // for default sort
+        console.log("default", column.Name)
+        unique.map((item) => {
+          return uniqueFormatted.push({ text: item, value: item })
+        })
+        // } else {
+        //   // for custom sort
+        //   column.sort.map((item) => {
+        //     if (unique.includes(item)) {
+        //       return uniqueFormatted.push({ text: item, value: item })
+        //     }
+        //   })
+        // }
         column.unique = uniqueFormatted
       }
 
@@ -89,6 +85,7 @@ const CustomTable = ({
         column.onFilter = (value, record) =>
           record[column.dataIndex].indexOf(value) === 0
 
+        column.className = column.source
         // sort
         // const sortByObject = column.sort.reduce(
         //   (obj, item, index) => ({
@@ -147,6 +144,7 @@ const CustomTable = ({
             .toLowerCase()
             .includes(value.toLowerCase())
 
+        column.className = column.source
         // search sort
         // column.sorter = (a, b) =>
         //   a[column.dataIndex].localeCompare(b[column.dataIndex])
@@ -180,45 +178,33 @@ const CustomTable = ({
                 ? ""
                 : text
 
-            return searchedColumn === column.dataIndex
-              ? formattedText
-              : // <Highlighter
-                //   highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-                //   searchWords={[searchText]}
-                //   autoEscape
-                //   textToHighlight={formattedText.toString()}
-                // />
-                formattedText
+            return formattedText
           }
         }
       }
 
       // scale example
       if (column.filter === "Scale" || column.filter === "Precise") {
-        const prefix = uniqueFormatted[0].value[0] === "$" ? "$" : ""
-        let missing = ["Null", "Na", "NA", "N/A"]
-        console.log(column, uniqueFormatted)
-        const values = uniqueFormatted
-          .filter((d) => missing.indexOf(d.value) === -1)
-          .map((d) => d.value.replace(/\D+/g, ""))
-
-        const min = Math.floor(Math.min(...values))
-        const max = Math.ceil(Math.max(...values))
-        const step = 1
-
-        column.render = (text) => {
-          const formattedText =
-            text.toLowerCase() === "null" || text.toLowerCase() === "na"
-              ? ""
-              : text
-          return formattedText
-        }
-
-        column.onFilter = (value, record) =>
-          record[column.dataIndex].replace(/\D+/g, "") !== "" &&
-          record[column.dataIndex].replace(/\D+/g, "") >= value[0] &&
-          record[column.dataIndex].replace(/\D+/g, "") <= value[1]
-
+        // const prefix = uniqueFormatted[0].value[0] === "$" ? "$" : ""
+        // let missing = ["Null", "Na", "NA", "N/A"]
+        // console.log(column, uniqueFormatted)
+        // const values = uniqueFormatted
+        //   .filter((d) => missing.indexOf(d.value) === -1)
+        //   .map((d) => d.value.replace(/\D+/g, ""))
+        // const min = Math.floor(Math.min(...values))
+        // const max = Math.ceil(Math.max(...values))
+        // const step = 1
+        // column.render = (text) => {
+        //   const formattedText =
+        //     text.toLowerCase() === "null" || text.toLowerCase() === "na"
+        //       ? ""
+        //       : text
+        //   return formattedText
+        // }
+        // column.onFilter = (value, record) =>
+        //   record[column.dataIndex].replace(/\D+/g, "") !== "" &&
+        //   record[column.dataIndex].replace(/\D+/g, "") >= value[0] &&
+        //   record[column.dataIndex].replace(/\D+/g, "") <= value[1]
         // sort
         // column.sorter = (a, b, sortOrder) => {
         //   const A = a[column.dataIndex]
@@ -235,45 +221,44 @@ const CustomTable = ({
         //   }
         //   return 0
         // }
-
         // scale filter
-        column.filterDropdown = ({
-          setSelectedKeys,
-          selectedKeys,
-          clearFilters,
-          confirm,
-        }) =>
-          column.filter === "Scale" ? (
-            <ScaleFilter
-              prefix={prefix}
-              column={column}
-              min={min}
-              max={max}
-              step={step}
-              clearFilters={clearFilters}
-              dataIndex={column.dataIndex}
-              selectedKeys={[selectedKeys]}
-              setSelectedKeys={setSelectedKeys}
-              confirm={confirm}
-              handleReset={handleReset}
-              handleSearch={handleSearch}
-            ></ScaleFilter>
-          ) : (
-            <PrecisionFilter
-              prefix={prefix}
-              column={column}
-              min={min}
-              max={max}
-              dataIndex={column.dataIndex}
-              selectedKeys={[selectedKeys]}
-              setSelectedKeys={setSelectedKeys}
-              confirm={confirm}
-              handleReset={handleReset}
-              handleSearch={handleSearch}
-              hasFilters={hasFilters}
-              clearFilters={clearFilters}
-            ></PrecisionFilter>
-          )
+        // column.filterDropdown = ({
+        //   setSelectedKeys,
+        //   selectedKeys,
+        //   clearFilters,
+        //   confirm,
+        // }) =>
+        //   column.filter === "Scale" ? (
+        //     <ScaleFilter
+        //       prefix={prefix}
+        //       column={column}
+        //       min={min}
+        //       max={max}
+        //       step={step}
+        //       clearFilters={clearFilters}
+        //       dataIndex={column.dataIndex}
+        //       selectedKeys={[selectedKeys]}
+        //       setSelectedKeys={setSelectedKeys}
+        //       confirm={confirm}
+        //       handleReset={handleReset}
+        //       handleSearch={handleSearch}
+        //     ></ScaleFilter>
+        //   ) : (
+        //     <PrecisionFilter
+        //       prefix={prefix}
+        //       column={column}
+        //       min={min}
+        //       max={max}
+        //       dataIndex={column.dataIndex}
+        //       selectedKeys={[selectedKeys]}
+        //       setSelectedKeys={setSelectedKeys}
+        //       confirm={confirm}
+        //       handleReset={handleReset}
+        //       handleSearch={handleSearch}
+        //       hasFilters={hasFilters}
+        //       clearFilters={clearFilters}
+        //     ></PrecisionFilter>
+        //   )
       }
 
       // add persona render
@@ -281,15 +266,16 @@ const CustomTable = ({
         column.render = (tag) => (
           <span>
             {column.unique.map((d) => d.value).indexOf(tag) !== -1 ? (
-              <Tag
-                color={
-                  column.colors[column.unique.map((d) => d.value).indexOf(tag)]
-                }
-                key={tag}
-              >
-                {tag.toUpperCase()}
-              </Tag>
-            ) : null}
+              <div>{tag.toUpperCase()}</div>
+            ) : // <Tag
+            //   color={
+            //     column.colors[column.unique.map((d) => d.value).indexOf(tag)]
+            //   }
+            //   key={tag}
+            // >
+            //   {tag.toUpperCase()}
+            // </Tag>
+            null}
           </span>
         )
       }
@@ -310,7 +296,7 @@ const CustomTable = ({
       .getElementById("download")
       .getBoundingClientRect()
     setPos({ x: position.x - (position2.x - position.x), y: position.y })
-  }, [targetKeys, searchText, filteredInfo])
+  }, [targetKeys, filteredInfo])
 
   const handleChange = (pagination, filters, sorter, extra) => {
     setFilteredInfo(filters)
@@ -344,6 +330,7 @@ const CustomTable = ({
     setExportData(extra.currentDataSource)
     setExportHeaders()
     //setCurrentDataSource(extra.currentDataSource)
+
     setModifiedColumns(temp)
   }
 
@@ -354,24 +341,15 @@ const CustomTable = ({
     })
     setModifiedColumns(temp)
     setHasFilters(false)
-    setSearchText("")
   }
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm()
-    setSearchText(selectedKeys ? selectedKeys[0] : "")
-    setSearchedColumn(dataIndex)
   }
 
   const handleReset = (clearFilters) => {
     clearFilters()
-    setSearchText("")
     setHasFilters(false)
-    // const temp = modifiedColumns.map(column => {
-    //   column.filteredValue = []
-    //   return column
-    // })
-    // setModifiedColumns(temp)
   }
 
   function showTotal(total) {
@@ -380,6 +358,9 @@ const CustomTable = ({
 
   const xScroll = width < 1140 ? "xhide" : "xshow"
   const yScroll = dataSource.length < 10 ? "yhide" : "yshow"
+
+  console.log("modifiedColumns :>>", modifiedColumns)
+  console.log("dataSource :>> ", dataSource)
 
   return (
     <>
@@ -405,9 +386,9 @@ const CustomTable = ({
           ></Button>
         </Tooltip>
       ) : null}
+
       <Table
-        searchText={searchText}
-        scroll={{ x: width, y: 400 }}
+        scroll={{ x: width, y: 390 }}
         columns={modifiedColumns}
         dataSource={dataSource}
         onChange={handleChange}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { InputNumber, Button } from "antd"
 
 const PrecisionFilter = ({
@@ -18,13 +18,19 @@ const PrecisionFilter = ({
   const [minSelect, setMinSelect] = useState()
   const [maxSelect, setMaxSelect] = useState()
 
-  useEffect(() => {
-    if (!hasFilters) {
-      console.log("should have resetted")
-      setMinSelect(min)
-      setMaxSelect(max)
-    }
-  }, [hasFilters])
+  if (!hasFilters) {
+    console.log("should have resetted")
+    setMinSelect(min)
+    setMaxSelect(max)
+  }
+
+  // useEffect(() => {
+  //   if (!hasFilters) {
+  //     console.log("should have resetted")
+  //     setMinSelect(min)
+  //     setMaxSelect(max)
+  //   }
+  // }, [hasFilters])
 
   const onMinChange = (value) => {
     setMinSelect(value)

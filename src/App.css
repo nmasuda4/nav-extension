@@ -287,3 +287,31 @@
   font-size: 11px;
   margin: 4px;
 }
+
+/* for color-coding source */
+
+/* .append {
+  color: blue !important;
+}
+
+.survey {
+  color: yellow !important;
+} */
+
+.ant-table-thead > tr > th {
+  font-weight: 400;
+}
+
+.square {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background-color: blue;
+  width: 8px !important;
+  height: 8px !important;
+}
+
+.ant-tag {
+  font-size: 12 !important;
+  font-weight: 400 !important;
+}

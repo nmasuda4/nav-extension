@@ -7,15 +7,16 @@ const TransferList = ({
   targetKeys,
   selectedKeys,
   handleKeyChange,
-  handleSelectedChange
+  handleSelectedChange,
 }) => {
   const mockData = []
+  console.log("columns", columns)
   columns
-    .filter(d => !d.permanent)
-    .map(d => {
+    .filter((d) => !d.permanent)
+    .map((d) => {
       const temp = {
-        key: d.title,
-        title: d.title
+        key: d.fieldname,
+        title: d.title,
       }
       return mockData.push(temp)
     })
@@ -29,11 +30,11 @@ const TransferList = ({
         selectedKeys={selectedKeys}
         onChange={handleKeyChange}
         onSelectChange={handleSelectedChange}
-        render={item => item.title}
+        render={(item) => item.title}
         showSearch
         listStyle={{
           width: 350,
-          height: 350
+          height: 350,
         }}
       />
     </div>

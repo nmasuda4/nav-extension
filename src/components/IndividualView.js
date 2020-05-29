@@ -12,18 +12,32 @@ const IndividualView = ({
   setInitialListLoad,
   tableConfig,
   setTableConfig,
-  tableData,
-  setTableData
+  defaultTableData,
+  setDefaultTableData,
 }) => {
   useEffect(() => {
     if (initialListLoad === false) {
       // fetch data from tableau worksheets
       tableau.extensions.initializeAsync().then(() => {
+        // fetch config
         const fetchConfig = async () => {
           const result = await tableau.extensions.dashboardContent.dashboard.worksheets
-            .find(worksheet => worksheet.name === "tableConfig")
-            .getSummaryDataAsync()
-            .then(dataTable => {
+            .find((worksheet) => worksheet.name === "tableConfig")
+            .getDataSourcesAsync()
+            .then((datasources) => {
+              let datasource = datasources.find(
+                (datasource) => datasource.name === "Table Configuration"
+              )
+
+              return datasource
+                .getLogicalTablesAsync()
+                .then((logicalTables) => {
+                  return datasource.getLogicalTableDataAsync(
+                    logicalTables[0].id
+                  )
+                })
+            })
+            .then((dataTable) => {
               const tableNames = dataTable.columns.map((column, i) => {
                 return column.fieldName
               })
@@ -43,48 +57,55 @@ const IndividualView = ({
             })
 
           setTableConfig(result)
+          return result
         }
 
-        const fetchData = async () => {
+        // fetch data
+        const fetchData = async (cols) => {
+          const defaultCols = cols
+            .filter((col, i) => {
+              return col.Default === "Yes"
+            })
+            .map((d) => d.Name)
+
           const result = await tableau.extensions.dashboardContent.dashboard.worksheets
-            .find(worksheet => worksheet.name === "tableData")
-            .getSummaryDataAsync()
-            .then(dataTable => {
-              function columnTitle(column) {
-                return column.includes("MAX")
-                  ? column.replace(/MAX|\(|\)/g, "")
-                  : column
-              }
+            .find((worksheet) => worksheet.name === "tableData")
+            .getDataSourcesAsync()
+            .then((datasources) => {
+              let dataSource = datasources.find(
+                (datasource) => datasource.name === "he_adv_survey"
+              )
 
-              dataTable.columns.map((d, i) => {
-                return (d.properFieldName = columnTitle(d.fieldName))
-              })
-
-              return dataTable
+              return dataSource
+                .getLogicalTablesAsync()
+                .then((logicalTables) => {
+                  return dataSource.getLogicalTableDataAsync(
+                    logicalTables[0].id,
+                    {
+                      columnsToInclude: defaultCols,
+                      maxRows: 100000,
+                    }
+                  )
+                })
             })
 
-          setTableData(result)
+          setDefaultTableData(result)
         }
 
         fetchConfig()
-        fetchData().then(() => setInitialListLoad(true))
+          .then((cols) => fetchData(cols))
+          .then(() => setInitialListLoad(true))
       })
     }
   }, [initialListLoad])
 
   return (
-    <div
-      style={{
-        paddingTop: "12px",
-        width: "100%"
-        // maxHeight: 400,
-        // height: 400
-        // height: 460,
-        // backgroundColor: "blue"
-      }}
-    >
+    <div style={{ width: "100%" }}>
       {initialListLoad ? (
-        <Main tableConfig={tableConfig} tableData={tableData}></Main>
+        <Main
+          tableConfig={tableConfig}
+          defaultTableData={defaultTableData}
+        ></Main>
       ) : (
         <div
           className='w-100 d-flex justify-content-center align-items-center'

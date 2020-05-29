@@ -1,11 +1,8 @@
 import React from "react"
-import { Icon } from "antd"
+import { Icon, Tag } from "antd"
 
-const assignColumns = function (column, settings, i) {
-  const { properFieldName } = column
-  const type = settings.Type
-  const filter = settings.Filter
-  const width = settings.Width
+const assignColumns = function (column, i) {
+  const { Name, Type, Filter, Width, Source, Sort, Permanent, Default } = column
 
   const tagColors = [
     "#3C786E",
@@ -18,40 +15,20 @@ const assignColumns = function (column, settings, i) {
     "#1F2A44",
   ]
 
+  // add width (with default)
   function addWidth(defaultWidth) {
-    const formattedWidth = width !== "%null%" ? width : defaultWidth
+    const formattedWidth = Width !== "%null%" ? Width : defaultWidth
     return formattedWidth
   }
 
   // dataIndex (lowercase, no space)
-  function addDataIndex(properFieldName) {
-    return properFieldName.toLowerCase().replace(/\s+/g, "")
+  function addDataIndex(Name) {
+    return Name.toLowerCase().replace(/\s+/g, "")
   }
 
-  function addRender(properFieldName) {
-    if (type === "Id") {
-      return (text, record, index) => {
-        const formattedText = text === "Null" ? "" : text
-        return formattedText
-      }
-
-      // (
-      // <div>
-      //   <span
-      //     id={record.id}
-      //     profileid={record}
-      //     onClick={showDrawer}
-      //     style={{ color: "#1890ff" }}
-      //   >
-      //     {text}
-      //   </span>
-      // </div>
-      //)
-    } else if (
-      filter === "Scale" ||
-      filter === "Dropdown" ||
-      filter === "Precise"
-    ) {
+  // if null then blank
+  function addRender() {
+    if (Type === "Id") {
       return (text) => {
         const formattedText = text === "Null" ? "" : text
         return formattedText
@@ -59,8 +36,9 @@ const assignColumns = function (column, settings, i) {
     }
   }
 
+  // add filter icon based on filter
   function addFilterIcon() {
-    if (filter === "Search") {
+    if (Filter === "Search") {
       return (filtered) => (
         <Icon
           type='search'
@@ -70,36 +48,44 @@ const assignColumns = function (column, settings, i) {
     }
   }
 
+  // sort order for dropdowns
   function addCustomSort() {
-    const sort = settings.Sort.split("|").map(function (item) {
-      return item.trim()
-    })
-    console.log("temp", sort)
+    const sort =
+      Sort !== "%null%" ? Sort.split("|").map((item) => item.trim()) : []
     return sort
   }
 
-  const dataIndex = addDataIndex(properFieldName)
+  // add color coded source tag
+  function addTagHeader() {
+    if (Source === "Append") {
+      return <Tag color='#2db7f5'>{Name}</Tag>
+    } else if (Source === "Survey") {
+      return <Tag color='#f50'>{Name}</Tag>
+    } else {
+      return <span style={{ fontSize: 12, fontWeight: 400 }}>{Name}</span>
+    }
+  }
 
   return {
-    Name: settings.Name,
-    fieldname: column.fieldName,
-    title: properFieldName,
+    Name: Name,
+    fieldname: Name,
+    dataIndex: Name,
     width: addWidth(180),
     indexOriginal: i,
     filters: [],
     filterIcon: addFilterIcon(),
-    // sorter: customSorter,
     sort: addCustomSort(),
     sortDirections: ["descend", "ascend"],
-    render: addRender(properFieldName),
-    dataIndex: dataIndex,
-    permanent: settings.Permanent === "Yes" ? true : false,
-    filter: settings.Filter,
-    type: settings.Type,
-    default: settings.Default === "Yes" ? true : false,
-    order: settings.Order,
-    source: settings.Source.toLowerCase(),
-    colors: settings.Type === "Persona" ? tagColors : [],
+    render: addRender(),
+    //dataIndex: addDataIndex(Name),
+    permanent: Permanent === "Yes",
+    filter: Filter,
+    type: Type,
+    default: Default === "Yes",
+    source: Source.toLowerCase(),
+    title: addTagHeader(),
+    colors: Type === "Persona" ? tagColors : [],
+    key: addDataIndex(Name),
   }
 }
 

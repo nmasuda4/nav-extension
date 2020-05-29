@@ -8,10 +8,10 @@ const Config = () => {
   const radioStyle = {
     display: "block",
     height: "30px",
-    lineHeight: "30px"
+    lineHeight: "30px",
   }
 
-  const getSettings = type =>
+  const getSettings = (type) =>
     new Promise((resolve, reject) => {
       resolve(tableau.extensions.settings.get(type))
     })
@@ -20,11 +20,15 @@ const Config = () => {
     //Initialise Extension
     tableau.extensions
       .initializeDialogAsync()
-      .then(openPayload => {
-        getSettings("phase").then(res => {
-          const numericRes = parseInt(res, 10)
-          setValue(numericRes)
-        })
+      .then(() => {
+        const getPhase = async () => {
+          getSettings("phase").then((res) => {
+            const numericRes = parseInt(res, 10)
+            setValue(numericRes)
+          })
+        }
+
+        getPhase()
       })
       .then(console.log("done"))
   }, [])
@@ -43,7 +47,7 @@ const Config = () => {
     new Promise((resolve, reject) => {
       tableau.extensions.settings
         .saveAsync()
-        .then(newSavedSettings => {
+        .then((newSavedSettings) => {
           tableau.extensions.ui.closeDialog(value)
           resolve(newSavedSettings)
         })
@@ -56,8 +60,8 @@ const Config = () => {
 
   return (
     <div>
-      <div className='d-flex flex-column p-4'>
-        <h3>Please select Phase:</h3>
+      <div className='d-flex flex-row p-4'>
+        {/* <h3>Please select Phase:</h3> */}
 
         <Radio.Group className='m-4' onChange={onChange} value={value}>
           <Radio style={radioStyle} value={1}>
@@ -78,7 +82,6 @@ const Config = () => {
     </div>
   )
 }
-
 export default Config
 
 // const domContainer = document.querySelector("#config_container")

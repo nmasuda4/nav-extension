@@ -1,5 +1,5 @@
 import React from "react"
-import { Modal } from "antd"
+import { Modal, Tag } from "antd"
 import TransferList from "./TransferList"
 
 const CustomModal = ({
@@ -9,20 +9,28 @@ const CustomModal = ({
   handleKeyChange,
   handleSelectedChange,
   setIsModal,
-  isModal
+  isModal,
 }) => {
-  const handleOk = e => {
+  const handleOk = (e) => {
     setIsModal(false)
   }
 
-  const handleCancel = e => {
+  const handleCancel = (e) => {
     setIsModal(false)
   }
 
   return (
     <div>
       <Modal
-        title='Add or Remove Columns'
+        title={
+          <>
+            <div style={{ paddingBottom: 8 }}>Add or Remove Columns</div>
+            <div className='d-flex'>
+              <Tag color='#2db7f5'>Data Appends</Tag>
+              <Tag color='#f50'>Survey Data</Tag>
+            </div>
+          </>
+        }
         visible={isModal}
         onOk={handleOk}
         onCancel={handleCancel}

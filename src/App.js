@@ -3,8 +3,6 @@ import { HashRouter, Switch, Route } from "react-router-dom"
 import Home from "./components/Home"
 import Config from "./components/Config"
 
-/* global tableau */
-
 const App = () => {
   return (
     <HashRouter>
