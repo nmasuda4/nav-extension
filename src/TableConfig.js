@@ -2,7 +2,17 @@ import React from "react"
 import { Icon, Tag } from "antd"
 
 const assignColumns = function (column, i) {
-  const { Name, Type, Filter, Width, Source, Sort, Permanent, Default } = column
+  const {
+    Name,
+    Type,
+    Filter,
+    Width,
+    Source,
+    Sort,
+    Permanent,
+    Default,
+    Index,
+  } = column
 
   const tagColors = [
     "#3C786E",
@@ -72,12 +82,12 @@ const assignColumns = function (column, i) {
     dataIndex: Name,
     width: addWidth(180),
     indexOriginal: i,
+    indexSource: Index.toString(),
     filters: [],
     filterIcon: addFilterIcon(),
     sort: addCustomSort(),
     sortDirections: ["descend", "ascend"],
     render: addRender(),
-    //dataIndex: addDataIndex(Name),
     permanent: Permanent === "Yes",
     filter: Filter,
     type: Type,

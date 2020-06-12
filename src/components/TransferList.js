@@ -10,7 +10,6 @@ const TransferList = ({
   handleSelectedChange,
 }) => {
   const mockData = []
-  console.log("columns", columns)
   columns
     .filter((d) => !d.permanent)
     .map((d) => {

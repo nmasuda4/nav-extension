@@ -1,5 +1,5 @@
 import React from "react"
-import WarningIcon from "../WarningIcon.png"
+import WarningIcon from "../images/WarningIcon.png"
 
 const Warning = () => {
   return (
@@ -13,7 +13,7 @@ const Warning = () => {
             margin: "10px auto",
             display: "flex",
             justifyContent: "center",
-            alignItems: "center"
+            alignItems: "center",
           }}
         />
         <h3
@@ -22,7 +22,7 @@ const Warning = () => {
             textAlign: "center",
             padding: 8,
             borderBottom: "1px solid silver",
-            width: "25%"
+            width: "25%",
           }}
         >
           Not Available
@@ -30,7 +30,7 @@ const Warning = () => {
         <p
           style={{
             color: "silver",
-            textAlign: "center"
+            textAlign: "center",
           }}
         >
           This view will be available in a future release.

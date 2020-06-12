@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/extensions/hea_master_test2/static/css/main.64d5fe0e.chunk.css",
+    "main.js": "/extensions/hea_master_test2/static/js/main.65616684.chunk.js",
+    "main.js.map": "/extensions/hea_master_test2/static/js/main.65616684.chunk.js.map",
+    "runtime~main.js": "/extensions/hea_master_test2/static/js/runtime~main.6acc0c8f.js",
+    "runtime~main.js.map": "/extensions/hea_master_test2/static/js/runtime~main.6acc0c8f.js.map",
+    "static/css/2.cc82b09a.chunk.css": "/extensions/hea_master_test2/static/css/2.cc82b09a.chunk.css",
+    "static/js/2.b9600d5a.chunk.js": "/extensions/hea_master_test2/static/js/2.b9600d5a.chunk.js",
+    "static/js/2.b9600d5a.chunk.js.map": "/extensions/hea_master_test2/static/js/2.b9600d5a.chunk.js.map",
+    "index.html": "/extensions/hea_master_test2/index.html",
+    "precache-manifest.2324480fe2e5b465809da8cbed69d3eb.js": "/extensions/hea_master_test2/precache-manifest.2324480fe2e5b465809da8cbed69d3eb.js",
+    "service-worker.js": "/extensions/hea_master_test2/service-worker.js",
+    "static/css/2.cc82b09a.chunk.css.map": "/extensions/hea_master_test2/static/css/2.cc82b09a.chunk.css.map",
+    "static/css/main.64d5fe0e.chunk.css.map": "/extensions/hea_master_test2/static/css/main.64d5fe0e.chunk.css.map"
+  }
+}

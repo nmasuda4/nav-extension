@@ -21,9 +21,9 @@ const CustomTable = ({
 
   useEffect(() => {
     // console.log("filteredInfo", filteredInfo)
-    console.log("dataSource", dataSource)
-    console.log("columns", columns)
-    console.log("targetKeys :>> ", targetKeys)
+    // console.log("dataSource", dataSource)
+    // console.log("columns", columns)
+    // console.log("targetKeys :>> ", targetKeys)
 
     // keep only selected columns
     const temp = columns.filter((column) => {
@@ -73,13 +73,13 @@ const CustomTable = ({
         column.filters = uniqueFormatted
 
         // render
-        column.render = (text) => {
-          const formattedText =
-            text.toLowerCase() === "null" || text.toLowerCase() === "na"
-              ? ""
-              : text
-          return formattedText
-        }
+        // column.render = (text) => {
+        //   const formattedText =
+        //     text.toLowerCase() === "null" || text.toLowerCase() === "na"
+        //       ? ""
+        //       : text
+        //   return formattedText
+        // }
 
         // filter
         column.onFilter = (value, record) =>
@@ -145,6 +145,14 @@ const CustomTable = ({
             .includes(value.toLowerCase())
 
         column.className = column.source
+        console.log("column.Title :>> ", column.Title)
+
+        if (column.Name === "DonorID") {
+          column.defaultSortOrder = "ascend"
+          column.sorter = (a, b) => a.DonorID - b.DonorID
+          column.sortDirections = ["descend", "ascend"]
+        }
+
         // search sort
         // column.sorter = (a, b) =>
         //   a[column.dataIndex].localeCompare(b[column.dataIndex])
@@ -171,16 +179,16 @@ const CustomTable = ({
         )
 
         // search render highlight
-        if (!column.render) {
-          column.render = (text) => {
-            const formattedText =
-              text.toLowerCase() === "null" || text.toLowerCase() === "na"
-                ? ""
-                : text
+        // if (!column.render) {
+        //   column.render = (text) => {
+        //     const formattedText =
+        //       text.toLowerCase() === "null" || text.toLowerCase() === "na"
+        //         ? ""
+        //         : text
 
-            return formattedText
-          }
-        }
+        //     return formattedText
+        //   }
+        // }
       }
 
       // scale example

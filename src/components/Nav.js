@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Layout, Menu, Icon } from "antd"
-import LogoCollapsed from "../HRLogoCollapsed.png"
+import LogoCollapsed from "../images/HRLogoCollapsed.png"
 import SubNav from "./SubNav"
 import WarningSummary from "./WarningSummary"
 import IndividualView from "./IndividualView"

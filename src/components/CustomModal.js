@@ -10,10 +10,11 @@ const CustomModal = ({
   handleSelectedChange,
   setIsModal,
   isModal,
+  handleOk,
 }) => {
-  const handleOk = (e) => {
-    setIsModal(false)
-  }
+  // const handleOk = (e) => {
+  //   setIsModal(false)
+  // }
 
   const handleCancel = (e) => {
     setIsModal(false)

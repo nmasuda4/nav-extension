@@ -5,11 +5,10 @@ import { saveAs } from "file-saver"
 import assignColumns from "../TableConfig"
 import CustomTable from "./CustomTable"
 import CustomModal from "./CustomModal"
+import { fetchNewData, getSelectedColumnsConfig } from "../functions/helpers"
 /* global tableau */
 
 const Main = ({ tableConfig, defaultTableData }) => {
-  console.log("tableData", defaultTableData)
-  console.log("tableConfig", tableConfig)
   const [loading, setLoading] = useState(true)
   const [reloading, setReloading] = useState(false)
   const [dataSource, setDataSource] = useState([])
@@ -21,7 +20,6 @@ const Main = ({ tableConfig, defaultTableData }) => {
 
   const [exportData, setExportData] = useState([])
   const [exportHeaders, setExportHeaders] = useState([])
-  const tempC = []
   const tempDS = []
 
   //const allTableHeaders = tableConfig.map((d) => d.Name)
@@ -43,20 +41,10 @@ const Main = ({ tableConfig, defaultTableData }) => {
   wb.SheetNames.push("Alumni")
 
   useEffect(() => {
+    // default only actions
     const fetchData = () => {
-      // tableData.columns.map((column, i) => {
-      //   const ind = allTableHeaders.indexOf(column.fieldName)
-      //   // if (ind !== -1) {
-      //     return tempC.push(assignColumns(column, tableConfig[ind], i))
-      //   // }
-      //   // if (ind === -1) {
-      //   //   return console.log(
-      //   //     `Error! Make sure all columns are equal in the configuration csv and tableData worksheet. Check ${column.properFieldName}.`
-      //   //   )
-      //   // }
-      // })
-
       // format config for Custom Table
+      const tempC = []
       const promise = tableConfig.map((d, i) => {
         return tempC.push(assignColumns(d, i))
       })
@@ -64,19 +52,18 @@ const Main = ({ tableConfig, defaultTableData }) => {
       // wait for map to finish
       Promise.all(promise).then(function (results) {
         const defaultColumns = tempC.filter((d) => d.default)
+        const colNames = defaultColumns.map((d) => d.fieldname)
 
-        const colNames = tempC
-          .filter((d) => d.default)
-          .sort((a, b) => a.indexOriginal - b.indexOriginal)
-          .map((d) => d.fieldname)
-
-        console.log("colNames", colNames)
         // format data for Custom Table (defautls only)
         defaultTableData.data.map((row, i) => {
           // for each donor
           tempDS.push({ key: i })
           return row.map((d, index) => {
-            return (tempDS[i][colNames[index]] = d.formattedValue.trim())
+            const tableauValue =
+              colNames[index] !== "Donor ID"
+                ? d.formattedValue.trim()
+                : d.nativeValue
+            return (tempDS[i][colNames[index]] = tableauValue)
           })
         })
 
@@ -87,7 +74,7 @@ const Main = ({ tableConfig, defaultTableData }) => {
         // for table width
         setWidth(
           defaultColumns.length > 0
-            ? defaultColumns.map((d) => d.width).reduce(reducer) + 200
+            ? colNames.map((d) => d.width).reduce(reducer) + 200
             : 200
         )
 
@@ -143,38 +130,43 @@ const Main = ({ tableConfig, defaultTableData }) => {
     )
   }
 
-  const fetchNewData = async (fetchColumns) => {
-    fetchColumns.push("DonorID")
+  // const fetchNewData = async (fetchColumns) => {
+  //   fetchColumns.push("DonorID")
 
-    const result = await tableau.extensions.dashboardContent.dashboard.worksheets
-      .find((worksheet) => worksheet.name === "tableData")
-      .getDataSourcesAsync()
-      .then((datasources) => {
-        let dataSource = datasources.find(
-          (datasource) => datasource.name === "he_adv_survey"
-        )
+  //   const result = await tableau.extensions.dashboardContent.dashboard.worksheets
+  //     .find((worksheet) => worksheet.name === "tableData")
+  //     .getDataSourcesAsync()
+  //     .then((datasources) => {
+  //       let dataSource = datasources.find(
+  //         (datasource) => datasource.name === "he_adv_survey"
+  //       )
 
-        return dataSource.getLogicalTablesAsync().then((logicalTables) => {
-          return dataSource.getLogicalTableDataAsync(logicalTables[0].id, {
-            columnsToInclude: fetchColumns,
-            maxRows: 100000,
-          })
-        })
-      })
+  //       return dataSource.getUnderlyingDataAsync({
+  //         columnsToInclude: fetchColumns,
+  //         maxRows: 0,
+  //       })
 
-    // format data for Custom Table (defautls only)
-    result.data.map((row, i) => {
-      // for each donor
-      tempDS.push({ key: i })
-      return row.map((d, index) => {
-        return (tempDS[i][fetchColumns[index]] = d.formattedValue.trim())
-      })
-    })
+  //       // return dataSource.getLogicalTablesAsync().then((logicalTables) => {
+  //       //   return dataSource.getLogicalTableDataAsync(logicalTables[0].id, {
+  //       //     columnsToInclude: fetchColumns,
+  //       //     // maxRows: 100000,
+  //       //   })
+  //       // })
+  //     })
 
-    return tempDS
+  //   // format data for Custom Table (defautls only)
+  //   result.data.map((row, i) => {
+  //     // for each donor
+  //     tempDS.push({ key: i })
+  //     return row.map((d, index) => {
+  //       return (tempDS[i][fetchColumns[index]] = d.formattedValue.trim())
+  //     })
+  //   })
 
-    // setDefaultTableData(result)
-  }
+  //   return tempDS
+
+  //   // setDefaultTableData(result)
+  // }
 
   const appendData = (newData) => {
     let returnedTarget = dataSource.map((item, i) =>
@@ -183,49 +175,36 @@ const Main = ({ tableConfig, defaultTableData }) => {
     return returnedTarget
   }
 
-  const handleKeyChange = (nextTargetKeys, direction, moveKeys) => {
-    setReloading(true)
-
-    // const active = columns.filter((d) => nextTargetKeys.includes(d.title))
-    // console.log("active :>> ", active)
-
-    console.log("nextTargetKeys :>> ", nextTargetKeys)
-
-    const fetchColumns = nextTargetKeys.filter((x) => !targetKeys.includes(x))
-
-    fetchNewData(fetchColumns)
-      .then((res) => appendData(res))
-      .then((appended) => setDataSource(appended))
-      .then(() => {
-        let tempC = []
-        tableConfig
-          .filter((d) => {
-            return nextTargetKeys.indexOf(d.Name) !== -1
-          })
-          .map((d, i) => {
-            return tempC.push(assignColumns(d, i))
-          })
-
-        return tempC
-      })
-      .then((active) => {
-        const reducer = (accumulator, currentValue) =>
-          accumulator + currentValue
-        setWidth(
-          active.length > 0
-            ? active.map((d) => d.width).reduce(reducer) + 200
-            : 200
-        )
-        setReloading(false)
-      })
-    setTargetKeys(nextTargetKeys)
-  }
-
   const handleSelectedChange = (sourceSelectedKeys, targetSelectedKeys) => {
     setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys])
   }
 
-  console.log("targetKeys", targetKeys)
+  const handleKeyChange = (nextTargetKeys, direction, moveKeys) => {
+    const fetchColumns = nextTargetKeys.filter((x) => !targetKeys.includes(x))
+
+    setTargetKeys(nextTargetKeys)
+  }
+
+  const handleOk = () => {
+    setReloading(true)
+    setIsModal(false)
+    const promise = getSelectedColumnsConfig(tableConfig, targetKeys)
+    console.log("promise", promise)
+    const reducer = (accumulator, currentValue) => accumulator + currentValue
+    setWidth(
+      promise.length > 0
+        ? promise.map((d) => d.width).reduce(reducer) + 200
+        : 200
+    )
+    console.log("started")
+
+    // adding columns
+    fetchNewData(promise, dataSource)
+      .then((res) => setDataSource(res))
+      .then(() => setReloading(false))
+
+    console.log("targetKeys", targetKeys)
+  }
 
   return (
     <>
@@ -241,6 +220,7 @@ const Main = ({ tableConfig, defaultTableData }) => {
             handleSelectedChange={handleSelectedChange}
             isModal={isModal}
             setIsModal={setIsModal}
+            handleOk={handleOk}
           ></CustomModal>
           <div className='tableButtonContainer'>
             <div className='d-flex flex-row justify-content-around'>
