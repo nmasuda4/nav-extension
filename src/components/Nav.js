@@ -1,5 +1,11 @@
 import React, { useState } from "react"
-import { Layout, Menu, Icon } from "antd"
+import { Layout, Menu } from "antd"
+import {
+  FundOutlined,
+  UserOutlined,
+  TableOutlined,
+  ToolOutlined,
+} from "@ant-design/icons"
 import LogoCollapsed from "../images/HRLogoCollapsed.png"
 import SubNav from "./SubNav"
 import WarningSummary from "./WarningSummary"
@@ -8,17 +14,15 @@ import IndividualView from "./IndividualView"
 const { Sider } = Layout
 
 const primary = [
-  { name: "Summary", icon: "fund" },
-  { name: "Persona", icon: "user" },
-  { name: "Individual", icon: "table" },
-  { name: "Methodology", icon: "tool" },
+  { name: "Summary", icon: <FundOutlined /> },
+  { name: "Persona", icon: <UserOutlined /> },
+  { name: "Individual", icon: <TableOutlined /> },
+  { name: "Methodology", icon: <ToolOutlined /> },
 ]
 
 const Nav = ({
   phase,
   view,
-  sheets,
-  height,
   onViewChange,
   onSubViewChange,
   onOpenChange,
@@ -26,10 +30,6 @@ const Nav = ({
   subMenuKeys,
   initialListLoad,
   setInitialListLoad,
-  // tableConfig,
-  // setTableConfig,
-  // defaultTableData,
-  // setDefaultTableData,
 }) => {
   const [tableConfig, setTableConfig] = useState([])
   const [defaultTableData, setDefaultTableData] = useState([])
@@ -96,8 +96,8 @@ const Nav = ({
                         ? "20px"
                         : "0px",
                   }}
+                  icon={d.icon}
                 >
-                  <Icon type={d.icon} />
                   <span>{d.name}</span>
                 </Menu.Item>
               )

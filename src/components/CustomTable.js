@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Table, Tooltip, Button } from "antd"
+import { Table } from "antd"
 import SearchFilter from "./SearchFilter"
 import ScaleFilter from "./ScaleFilter"
 import PrecisionFilter from "./PrecisionFilter"
@@ -7,155 +7,140 @@ import "antd/dist/antd.css"
 import "../App.css"
 
 const CustomTable = ({
+  ID,
   dataSource,
+  setDataSource,
   setExportData,
-  setExportHeaders,
+  filtersToClear,
   columns,
   width,
   targetKeys,
+  hasFilters,
+  setHasFilters,
+  modifiedColumns,
+  setModifiedColumns,
+  handleReset,
 }) => {
-  const [modifiedColumns, setModifiedColumns] = useState()
   const [filteredInfo, setFilteredInfo] = useState({})
-  const [hasFilters, setHasFilters] = useState(false)
-  const [pos, setPos] = useState({ x: 0, y: 0 })
-
   useEffect(() => {
-    // console.log("filteredInfo", filteredInfo)
-    // console.log("dataSource", dataSource)
-    // console.log("columns", columns)
+    console.log("filtersToClear useEffect:>> ", filtersToClear)
+    // console.log("dataSource :>> ", dataSource)
+    // console.log("columns :>> ", columns)
     // console.log("targetKeys :>> ", targetKeys)
-
     // keep only selected columns
     const temp = columns.filter((column) => {
-      return (
-        targetKeys.indexOf(column.Name) !== -1 || column.permanent === "Yes"
-      )
+      return targetKeys.indexOf(column.name) !== -1 || column.permanent
     })
 
-    console.log("temp", temp)
+    // all table configurations that are based on data
     temp.map((column) => {
-      const uniqueFormatted = []
+      // const uniqueFormatted = []
 
-      // get unique values for dropdown and scale
+      // get unique values for dropdown
       if (column.filter === "Dropdown") {
-        const unique = [
-          ...new Set(dataSource.map((h) => h[column.dataIndex])),
-        ].sort()
+        // const unique = [
+        //   ...new Set(
+        //     dataSource.map(
+        //       (h) => h[column.dataIndex].value || h[column.dataIndex]
+        //     ).map( d => {
 
-        console.log(column.Name, column.sort.length, unique)
-        // if (column.sort.length === 0) {
-        // for default sort
-        console.log("default", column.Name)
-        unique.map((item) => {
-          return uniqueFormatted.push({ text: item, value: item })
-        })
-        // } else {
-        //   // for custom sort
-        //   column.sort.map((item) => {
-        //     if (unique.includes(item)) {
-        //       return uniqueFormatted.push({ text: item, value: item })
-        //     }
-        //   })
+        //     })
+        //   ),
+        // ]
+
+        const unique = []
+        const map = new Map()
+
+        // for (const item of dataSource) {
+        //   if (
+        //     !map.has(
+        //       item[column.dataIndex].formattedValue || item[column.dataIndex]
+        //     )
+        //   ) {
+        //     map.set(
+        //       item[column.dataIndex].formattedValue || item[column.dataIndex],
+        //       true
+        //     ) // set any value to Map
+        //     unique.push({
+        //       text:
+        //         item[column.dataIndex].formattedValue || item[column.dataIndex],
+        //       value: item[column.dataIndex].value || item[column.dataIndex],
+        //     })
+        //   }
         // }
-        column.unique = uniqueFormatted
-      }
 
-      if (column.filter === "Scale" || column.filter === "Precise") {
-        const unique = [
-          ...new Set(dataSource.map((h) => h[column.dataIndex])),
-        ].sort()
-        unique.map((item) => uniqueFormatted.push({ text: item, value: item }))
-        column.unique = uniqueFormatted
-      }
+        dataSource.map((d) => {
+          let properText =
+            typeof d[column.dataIndex] === "object"
+              ? d[column.dataIndex].formattedValue
+              : d[column.dataIndex]
 
-      // dropdown example
-      if (column.filter === "Dropdown") {
+          let properValue =
+            typeof d[column.dataIndex] === "object"
+              ? d[column.dataIndex].value
+              : d[column.dataIndex]
+
+          if (!map.has(properText)) {
+            map.set(properText, true) // set any value to Map
+            unique.push({
+              text: properText,
+              value: properValue,
+            })
+          }
+        })
+
+        // unique.filter((d) => d.text !== "Null")
+
+        // .sort()
+
+        const uniqueFormatted =
+          column.dropdownSortOrder.length === 0
+            ? unique.filter((d) => d.text !== "Null") // default sort
+            : unique
+                .sort(function (a, b) {
+                  // for custom sort
+                  return (
+                    column.dropdownSortOrder.indexOf(a.text) -
+                    column.dropdownSortOrder.indexOf(b.text)
+                  )
+                })
+                .filter((d) => d.text !== "Null")
+
+        column.unique = uniqueFormatted
+
+        // dropdown example
+        // if (column.filter === "Dropdown") {
         column.filters = uniqueFormatted
 
-        // render
-        // column.render = (text) => {
-        //   const formattedText =
-        //     text.toLowerCase() === "null" || text.toLowerCase() === "na"
-        //       ? ""
-        //       : text
-        //   return formattedText
-        // }
-
         // filter
-        column.onFilter = (value, record) =>
-          record[column.dataIndex].indexOf(value) === 0
+        column.onFilter = (value, record) => {
+          if (typeof record[column.dataIndex] === "string") {
+            return record[column.dataIndex].indexOf(value) === 0
+          } else {
+            return record[column.dataIndex].value === value
+          }
+        }
 
         column.className = column.source
-        // sort
-        // const sortByObject = column.sort.reduce(
-        //   (obj, item, index) => ({
-        //     ...obj,
-        //     [item]: index,
-        //   }),
-        //   {}
-        // )
-
-        //   column.sorter =
-        //     column.sort.length === 1 && column.sort.includes("%null%")
-        //       ? (a, b, sortOrder) => {
-        //           // without custom sort
-        //           const A = a[column.dataIndex]
-        //           const B = b[column.dataIndex]
-        //           if (A !== "Null" && B !== "Null") {
-        //             a[column.dataIndex].localeCompare(
-        //               b[column.dataIndex],
-        //               undefined,
-        //               {
-        //                 numeric: true,
-        //                 sensitivity: "base",
-        //               }
-        //             )
-        //           } else if (A === "Null") {
-        //             return sortOrder === "ascend" ? 1 : -1
-        //           } else if (B === "Null") {
-        //             return sortOrder === "ascend" ? -1 : 1
-        //           }
-        //           return 0
-        //         }
-        //       : (a, b, sortOrder) => {
-        //           // with custom sort
-        //           const A = a[column.dataIndex]
-        //           const B = b[column.dataIndex]
-        //           if (A !== "Null" && B !== "Null") {
-        //             return (
-        //               sortByObject[a[column.dataIndex]] -
-        //               sortByObject[b[column.dataIndex]]
-        //             )
-        //           } else if (A === "Null") {
-        //             return sortOrder === "ascend" ? 1 : -1
-        //           } else if (B === "Null") {
-        //             return sortOrder === "ascend" ? -1 : 1
-        //           }
-        //           return 0
-        //         }
       }
 
       // search example
       if (column.filter === "Search") {
         // search onfilter
-        column.onFilter = (value, record) =>
-          record[column.dataIndex]
-            .toString()
-            .toLowerCase()
-            .includes(value.toLowerCase())
-
-        column.className = column.source
-        console.log("column.Title :>> ", column.Title)
-
-        if (column.Name === "DonorID") {
-          column.defaultSortOrder = "ascend"
-          column.sorter = (a, b) => a.DonorID - b.DonorID
-          column.sortDirections = ["descend", "ascend"]
+        column.onFilter = (value, record) => {
+          if (typeof record[column.dataIndex] === "string") {
+            return record[column.dataIndex]
+              .toString()
+              .toLowerCase()
+              .includes(value.toLowerCase())
+          } else {
+            return record[column.dataIndex].formattedValue
+              .toLowerCase()
+              .includes(value.toLowerCase())
+          }
         }
 
-        // search sort
-        // column.sorter = (a, b) =>
-        //   a[column.dataIndex].localeCompare(b[column.dataIndex])
+        column.className = column.source
 
         // search box filter
         column.filterDropdown = ({
@@ -170,122 +155,69 @@ const CustomTable = ({
             handleReset={handleReset}
             handleSearch={handleSearch}
             dataIndex={column.dataIndex}
-            placeholder={column.Name}
+            placeholder={column.name}
             selectedKeys={selectedKeys}
             setSelectedKeys={setSelectedKeys}
             confirm={confirm}
             visible={visible}
           ></SearchFilter>
         )
-
-        // search render highlight
-        // if (!column.render) {
-        //   column.render = (text) => {
-        //     const formattedText =
-        //       text.toLowerCase() === "null" || text.toLowerCase() === "na"
-        //         ? ""
-        //         : text
-
-        //     return formattedText
-        //   }
-        // }
       }
 
       // scale example
       if (column.filter === "Scale" || column.filter === "Precise") {
-        // const prefix = uniqueFormatted[0].value[0] === "$" ? "$" : ""
-        // let missing = ["Null", "Na", "NA", "N/A"]
-        // console.log(column, uniqueFormatted)
-        // const values = uniqueFormatted
-        //   .filter((d) => missing.indexOf(d.value) === -1)
-        //   .map((d) => d.value.replace(/\D+/g, ""))
-        // const min = Math.floor(Math.min(...values))
-        // const max = Math.ceil(Math.max(...values))
-        // const step = 1
-        // column.render = (text) => {
-        //   const formattedText =
-        //     text.toLowerCase() === "null" || text.toLowerCase() === "na"
-        //       ? ""
-        //       : text
-        //   return formattedText
-        // }
-        // column.onFilter = (value, record) =>
-        //   record[column.dataIndex].replace(/\D+/g, "") !== "" &&
-        //   record[column.dataIndex].replace(/\D+/g, "") >= value[0] &&
-        //   record[column.dataIndex].replace(/\D+/g, "") <= value[1]
-        // sort
-        // column.sorter = (a, b, sortOrder) => {
-        //   const A = a[column.dataIndex]
-        //   const B = b[column.dataIndex]
-        //   if (A !== "Null" && B !== "Null") {
-        //     return A.localeCompare(B, undefined, {
-        //       numeric: true,
-        //       sensitivity: "base",
-        //     })
-        //   } else if (A === "Null") {
-        //     return sortOrder === "ascend" ? 1 : -1
-        //   } else if (B === "Null") {
-        //     return sortOrder === "ascend" ? -1 : 1
-        //   }
-        //   return 0
-        // }
-        // scale filter
-        // column.filterDropdown = ({
-        //   setSelectedKeys,
-        //   selectedKeys,
-        //   clearFilters,
-        //   confirm,
-        // }) =>
-        //   column.filter === "Scale" ? (
-        //     <ScaleFilter
-        //       prefix={prefix}
-        //       column={column}
-        //       min={min}
-        //       max={max}
-        //       step={step}
-        //       clearFilters={clearFilters}
-        //       dataIndex={column.dataIndex}
-        //       selectedKeys={[selectedKeys]}
-        //       setSelectedKeys={setSelectedKeys}
-        //       confirm={confirm}
-        //       handleReset={handleReset}
-        //       handleSearch={handleSearch}
-        //     ></ScaleFilter>
-        //   ) : (
-        //     <PrecisionFilter
-        //       prefix={prefix}
-        //       column={column}
-        //       min={min}
-        //       max={max}
-        //       dataIndex={column.dataIndex}
-        //       selectedKeys={[selectedKeys]}
-        //       setSelectedKeys={setSelectedKeys}
-        //       confirm={confirm}
-        //       handleReset={handleReset}
-        //       handleSearch={handleSearch}
-        //       hasFilters={hasFilters}
-        //       clearFilters={clearFilters}
-        //     ></PrecisionFilter>
-        //   )
-      }
+        const unique = [
+          ...new Set(dataSource.map((h) => h[column.dataIndex].value)),
+        ]
 
-      // add persona render
-      if (column.type === "Persona") {
-        column.render = (tag) => (
-          <span>
-            {column.unique.map((d) => d.value).indexOf(tag) !== -1 ? (
-              <div>{tag.toUpperCase()}</div>
-            ) : // <Tag
-            //   color={
-            //     column.colors[column.unique.map((d) => d.value).indexOf(tag)]
-            //   }
-            //   key={tag}
-            // >
-            //   {tag.toUpperCase()}
-            // </Tag>
-            null}
-          </span>
-        )
+        const min = Math.floor(Math.min(...unique))
+        const max = Math.ceil(Math.max(...unique))
+
+        const step = 1
+
+        column.onFilter = (value, record) => {
+          return (
+            record[column.dataIndex].value >= value[0] &&
+            record[column.dataIndex].value <= value[1]
+          )
+        }
+
+        // scale filter
+        column.filterDropdown = ({
+          setSelectedKeys,
+          selectedKeys,
+          clearFilters,
+          confirm,
+        }) =>
+          column.filter === "Scale" ? (
+            <ScaleFilter
+              column={column}
+              min={min}
+              max={max}
+              step={step}
+              clearFilters={clearFilters}
+              dataIndex={column.dataIndex}
+              selectedKeys={[selectedKeys]}
+              setSelectedKeys={setSelectedKeys}
+              confirm={confirm}
+              handleReset={handleReset}
+              handleSearch={handleSearch}
+            ></ScaleFilter>
+          ) : (
+            <PrecisionFilter
+              column={column}
+              min={min}
+              max={max}
+              dataIndex={column.dataIndex}
+              selectedKeys={[selectedKeys]}
+              setSelectedKeys={setSelectedKeys}
+              confirm={confirm}
+              handleReset={handleReset}
+              handleSearch={handleSearch}
+              hasFilters={hasFilters}
+              clearFilters={clearFilters}
+            ></PrecisionFilter>
+          )
       }
 
       return column
@@ -293,71 +225,63 @@ const CustomTable = ({
 
     setModifiedColumns(
       temp.sort(function (a, b) {
-        return a.order - b.order
+        return a.columnOrder - b.columnOrder
       })
     )
-
-    const position = document
-      .getElementById("addremove")
-      .getBoundingClientRect()
-    const position2 = document
-      .getElementById("download")
-      .getBoundingClientRect()
-    setPos({ x: position.x - (position2.x - position.x), y: position.y })
-  }, [targetKeys, filteredInfo])
+  }, [dataSource, targetKeys, filteredInfo])
 
   const handleChange = (pagination, filters, sorter, extra) => {
-    setFilteredInfo(filters)
-    console.log("extra", extra.currentDataSource)
-
-    const filterValues = Object.values(filters).map((d) => d.length !== 0) || []
-    const reducer = (accumulator, currentValue) => accumulator || currentValue
-
-    if (filterValues.reduce(reducer, false)) {
-      setHasFilters(true)
-    } else {
-      setHasFilters(false)
-    }
-
-    const temp = modifiedColumns.map((column) => {
-      column.filteredValue = filters[column.dataIndex]
-
-      return column
+    console.log("filters :>> ", filters)
+    const emptyPromise = new Promise((resolve) => {
+      resolve("Success!")
     })
 
-    // set export data
-    // const headers = Object.keys(extra.currentDataSource[0])
-    // const dat = dataSource.map(d => {
-    //   const { tags, ...withoutStuff } = d
-    //   return withoutStuff
-    // })
+    emptyPromise
+      .then(() => setFilteredInfo(filters))
+      .then(() => {
+        console.log("filters :>> ", filters)
+        const filterValues = Object.values(filters).map((d) => !d) || null
+        const reducer = (accumulator, currentValue) =>
+          accumulator || currentValue
+        // console.log("filterValues :>> ", filterValues)
 
-    // setExportData(dat)
-    // setHeaders(headers)
-    // setHeaders(headers.filter((d, i) => i !== headers.length - 1))
-    setExportData(extra.currentDataSource)
-    setExportHeaders()
-    //setCurrentDataSource(extra.currentDataSource)
+        if (filterValues.reduce(reducer, false)) {
+          // console.log("filtered :>> ", "must be")
+          setHasFilters(true)
+        }
 
-    setModifiedColumns(temp)
-  }
+        // else {
+        //   setHasFilters(false)
+        // }
 
-  const clearFilters = () => {
-    const temp = modifiedColumns.map((column) => {
-      column.filteredValue = []
-      return column
-    })
-    setModifiedColumns(temp)
-    setHasFilters(false)
+        console.log("filtersToClear :>> ", filtersToClear)
+        const temp = modifiedColumns.map((column) => {
+          column.filteredValue = filters[column.dataIndex]
+
+          // if (filtersToClear.includes(column)) {
+          //   column.filteredValue = null
+          // } else {
+          //   column.filteredValue = filters[column.dataIndex]
+          // }
+          return column
+        })
+        console.log("temp 99 :>> ", temp)
+
+        // console.log("extra", extra.currentDataSource)
+        // console.log("filters :>> ", filters)
+
+        setModifiedColumns(
+          temp.sort(function (a, b) {
+            return a.columnOrder - b.columnOrder
+          })
+        )
+      })
+      .then(() => setExportData(extra.currentDataSource))
   }
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    // console.log("selectedKeys :>> ", selectedKeys)
     confirm()
-  }
-
-  const handleReset = (clearFilters) => {
-    clearFilters()
-    setHasFilters(false)
   }
 
   function showTotal(total) {
@@ -367,51 +291,31 @@ const CustomTable = ({
   const xScroll = width < 1140 ? "xhide" : "xshow"
   const yScroll = dataSource.length < 10 ? "yhide" : "yshow"
 
-  console.log("modifiedColumns :>>", modifiedColumns)
-  console.log("dataSource :>> ", dataSource)
+  console.log("modifiedColumns :>> ", modifiedColumns)
 
   return (
     <>
-      {hasFilters ? (
-        <Tooltip
-          placement='left'
-          overlayStyle={{ fontSize: 12 }}
-          title='Clear Filters'
-          id='clear'
-        >
-          <Button
-            style={{
-              position: "absolute",
-              zIndex: 1000,
-              top: pos.y,
-              left: pos.x,
-            }}
-            type='primary'
-            icon='undo'
-            shape='circle'
-            size='default'
-            onClick={clearFilters}
-          ></Button>
-        </Tooltip>
-      ) : null}
-
-      <Table
-        scroll={{ x: width, y: 390 }}
-        columns={modifiedColumns}
-        dataSource={dataSource}
-        onChange={handleChange}
-        size={"middle"}
-        className={`smallFont ${xScroll} ${yScroll}`}
-        pagination={{
-          position: "bottom",
-          defaultPageSize: 500,
-          size: "small",
-          showTotal: showTotal,
-          showSizeChanger: true,
-          showQuickJumper: true,
-          pageSizeOptions: ["100", "500", "1000"],
-        }}
-      />
+      {modifiedColumns ? (
+        <Table
+          scroll={{ x: width, y: 360 }}
+          columns={modifiedColumns}
+          dataSource={dataSource}
+          onChange={handleChange}
+          size={"middle"}
+          className={`smallFont ${xScroll} ${yScroll}`}
+          pagination={{
+            position: "bottom",
+            defaultPageSize: 500,
+            size: "small",
+            showTotal: showTotal,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            pageSizeOptions: ["100", "500", "1000"],
+          }}
+        />
+      ) : (
+        <div></div>
+      )}
     </>
   )
 }

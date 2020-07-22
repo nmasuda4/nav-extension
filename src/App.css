@@ -38,6 +38,12 @@
   }
 }
 
+/* remove tooltip arrow */
+
+.ant-menu-inline-collapsed-tooltip {
+  display: none;
+}
+
 .ant-tooltip-placement-right > .ant-tooltip-content > .ant-tooltip-inner {
   color: white !important;
   background-color: none !important;
@@ -63,7 +69,7 @@
   flex: none !important;
 }
 
-.ant-tooltip-arrow::before {
+.ant-tooltip-arrow::after {
   content: none !important;
 }
 
@@ -153,18 +159,99 @@
 
 /* move icons closer to column name */
 
-.ant-table-thead > tr > th .anticon {
-  position: relative !important;
+.ant-table-filter-column-title {
+  flex: initial !important;
+  padding: 12px 0px 12px 8px !important;
 }
 
-.ant-table-thead > tr > th .anticon > svg {
+.ant-table-filter-trigger-container {
   position: relative !important;
   top: unset !important;
   left: unset !important;
+  right: unset !important;
+  bottom: unset !important;
 }
 
-.ant-table-thead > tr > th > .ant-table-header-column {
+/* remove dropdown on transfer list header */
+.ant-transfer-list-header-dropdown {
+  display: none !important;
+}
+
+/* don't restyle on hover of filter */
+.ant-table-filter-trigger-container {
+  background: none !important;
+}
+
+/* fix search icon border */
+.searchBorder {
+  border: none !important;
+}
+
+.ant-table-filter-trigger {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 100% !important;
+}
+
+/* fix margin issue between header title/tag and icon */
+.ant-table-filter-column-title > .ant-tag {
+  margin-right: 4px !important;
+}
+
+/* transfer icons center align > and < */
+.ant-btn-icon-only.ant-btn-sm {
+  font-size: 8px !important;
+}
+
+.ant-tree-node-content-wrapper.ant-tree-node-selected {
+  background-color: transparent !important;
+}
+
+/* hide checkbox for left transfer */
+.ant-transfer-list:first-of-type .ant-checkbox-wrapper {
+  display: none !important;
+}
+/* .ant-table-filter-column > tr > th > div .anticon > svg {
+  position: relative !important;
+  top: unset !important;
+  left: unset !important;
+} */
+/* .ant-table-thead > tr > th > .ant-table-header-column {
   margin-right: 12px !important;
+} */
+
+/* tree-transfer css */
+.ant-tree {
+  font-size: 13px !important;
+}
+
+.tree-transfer {
+  font-size: 13px !important;
+}
+
+.tree-transfer .ant-transfer-list:first-child {
+  width: 50%;
+  flex: none;
+}
+
+.ant-transfer-list-content-item-text {
+  font-size: 13px !important;
+}
+
+/* dropdown caret in transfer */
+.ant-tree-switcher {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  font-size: 10px !important;
+}
+
+/* center the search cancel icon */
+.ant-transfer-list-search-action {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 
 .ant-table-thead
@@ -213,7 +300,7 @@
 } */
 
 .tableButtonContainer {
-  width: 100px;
+  /* width: 100px; */
   height: 40px;
   position: absolute;
   right: 10px;
@@ -311,7 +398,53 @@
   height: 8px !important;
 }
 
-.ant-tag {
+/* custom tag color */
+/* undo css for institutional data in legend */
+/* .legend-container > .ant-tag-institutionaldata {
+  display: none;
+} */
+
+/* .customModal > .ant-tag-institutionaldata {
+  display: none;
+} */
+
+/* .ant-tag-institutionaldata {
+  background: none !important;
+  border-color: transparent !important;
+  padding-left: 0 !important;
   font-size: 12 !important;
   font-weight: 400 !important;
+} */
+
+.ant-tag-augmenteddata {
+  color: #00594c;
+  background: #e5eceb;
+  border-color: #6d9890;
+  font-weight: 400 !important;
+}
+
+.ant-tag-updateddata {
+  color: #fc4c02;
+  background: #ffeee5;
+  border-color: #ff9b6d;
+  font-weight: 400 !important;
+}
+
+.ant-tag-dataappendflags {
+  color: #53565a;
+  background: #ececec;
+  border-color: #939598;
+  font-weight: 400 !important;
+}
+
+.ant-tag-institutionaldata {
+  color: #1f2a44;
+  background: #e5e6ea;
+  border-color: #72768a;
+  font-weight: 400 !important;
+}
+
+/* resize font for dropdown menu */
+.ant-dropdown-menu > li {
+  font-size: 12px !important;
 }

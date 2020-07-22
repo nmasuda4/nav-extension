@@ -1,5 +1,6 @@
 import React from "react"
 import { Input, Button } from "antd"
+import { SearchOutlined } from "@ant-design/icons"
 
 const SearchFilter = ({
   setSelectedKeys,
@@ -9,7 +10,7 @@ const SearchFilter = ({
   handleSearch,
   placeholder,
   dataIndex,
-  confirm
+  confirm,
 }) => {
   const selectedKeys1 = selectedKeys || []
 
@@ -19,20 +20,23 @@ const SearchFilter = ({
         padding: 8,
         position: "absolute",
         left: 20,
-        background: "white"
+        background: "white",
       }}
     >
       <Input
         placeholder={`Search ${placeholder}`}
         value={selectedKeys1[0]}
-        onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+        onChange={(e) => {
+          setSelectedKeys(e.target.value ? [e.target.value] : [])
+        }}
         onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
         style={{ width: 188, marginBottom: 8, display: "block" }}
       />
+
       <Button
         type='primary'
         onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-        icon='search'
+        icon={<SearchOutlined />}
         size='small'
         style={{ width: 90, marginRight: 8 }}
       >

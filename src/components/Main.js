@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from "react"
-import { Button, Tooltip, Tag } from "antd"
-import XLSX from "xlsx"
-import { saveAs } from "file-saver"
+import { Button, Tooltip, Tag, Spin } from "antd"
+import {
+  LoadingOutlined,
+  DownloadOutlined,
+  EditOutlined,
+  UndoOutlined,
+} from "@ant-design/icons"
 import assignColumns from "../TableConfig"
 import CustomTable from "./CustomTable"
 import CustomModal from "./CustomModal"
-import { fetchNewData, getSelectedColumnsConfig } from "../functions/helpers"
-/* global tableau */
+import {
+  fetchNewData,
+  getSelectedColumnsConfig,
+  appendDefaultData,
+  handleExport,
+} from "../functions/helpers"
+
+const antIcon = (
+  <LoadingOutlined style={{ fontSize: 36, marginBottom: 12 }} spin />
+)
 
 const Main = ({ tableConfig, defaultTableData }) => {
   const [loading, setLoading] = useState(true)
@@ -14,31 +26,22 @@ const Main = ({ tableConfig, defaultTableData }) => {
   const [dataSource, setDataSource] = useState([])
   const [columns, setColumns] = useState([])
   const [width, setWidth] = useState(0)
-  const [selectedKeys, setSelectedKeys] = useState([])
-  const [targetKeys, setTargetKeys] = useState([])
+  const [legend, setLegend] = useState()
+  const [isFetchRequired, setIsFetchRequired] = useState(false)
+  const [defaultData, setDefaultData] = useState()
+  const [currentTargetKeys, setCurrentTargetKeys] = useState([])
+  const [allTargetKeysOrder, setAllTargetKeysOrder] = useState()
+  const [hasFilters, setHasFilters] = useState()
+  const [modifiedColumns, setModifiedColumns] = useState()
   const [isModal, setIsModal] = useState(false)
+  const [filtersToClear, setFiltersToClear] = useState([])
 
   const [exportData, setExportData] = useState([])
-  const [exportHeaders, setExportHeaders] = useState([])
+  // const [exportHeaders, setExportHeaders] = useState([])
   const tempDS = []
 
-  //const allTableHeaders = tableConfig.map((d) => d.Name)
-  // const defaulttableHeaders = tableConfig
-  //   .filter((col, i) => {
-  //     return col.Default === "Yes"
-  //   })
-  //   .map((d) => d.Name)
-
-  var wb = XLSX.utils.book_new()
-
-  wb.Props = {
-    Title: "Alumni",
-    Subject: "Test",
-    Author: "Guest",
-    CreatedDate: new Date(),
-  }
-
-  wb.SheetNames.push("Alumni")
+  var ID = tableConfig.filter((d) => d.Identifier == true)[0].Name
+  var Sort = tableConfig.filter((d) => d.SortEnabled == true)[0].Name
 
   useEffect(() => {
     // default only actions
@@ -50,40 +53,75 @@ const Main = ({ tableConfig, defaultTableData }) => {
       })
 
       // wait for map to finish
-      Promise.all(promise).then(function (results) {
-        const defaultColumns = tempC.filter((d) => d.default)
-        const colNames = defaultColumns.map((d) => d.fieldname)
+      Promise.all(promise)
+        .then(function (results) {
+          const uniqueDataTypes = [
+            ...new Set(
+              tempC
+                .filter((d) => d.dataType !== "%null%")
+                .map((d) => d.dataType)
+            ),
+          ]
+          // console.log("uniqueDataTypes :>> ", uniqueDataTypes)
+          // console.log("defaultTableData :>> ", defaultTableData)
 
-        // format data for Custom Table (defautls only)
-        defaultTableData.data.map((row, i) => {
-          // for each donor
-          tempDS.push({ key: i })
-          return row.map((d, index) => {
-            const tableauValue =
-              colNames[index] !== "Donor ID"
-                ? d.formattedValue.trim()
-                : d.nativeValue
-            return (tempDS[i][colNames[index]] = tableauValue)
+          // table config results
+          const tableConfigColumns = tempC.filter(
+            (d) => d.dataSource === "Default"
+          )
+          const tableConfigNames = tableConfigColumns.map((d) => d.name)
+          const allTableConfigNames = tempC.map((d) => d.name)
+
+          // default data columns
+          const defaultDataColumnNames = defaultTableData.columns.map(
+            (d) => d.fieldName
+          )
+          // sort config columns and initialload columns
+          const initialColNames = tableConfigNames.filter(
+            (d) => defaultDataColumnNames.indexOf(d) > -1
+          )
+
+          // format data for Custom Table (defautls only)
+          defaultTableData.data.map((row, i) => {
+            // for each donor
+            tempDS.push({ key: i })
+            return row.map((d, index) => {
+              // if (d.)
+              const tableauValue =
+                ["int", "float"].includes(
+                  defaultTableData.columns[index].dataType
+                ) && defaultTableData.columns[index].fieldName !== ID
+                  ? d
+                  : d.formattedValue.trim()
+              if (
+                tableConfigNames.indexOf(defaultDataColumnNames[index]) > -1
+              ) {
+                return (tempDS[i][defaultDataColumnNames[index]] = tableauValue)
+              }
+            })
           })
+
+          const reducer = (accumulator, currentValue) =>
+            accumulator + currentValue
+
+          // const active = tempC.filter((d) => d.default)
+
+          // for table width
+          setWidth(
+            tableConfigColumns.length > 0
+              ? tableConfigColumns.map((d) => d.width).reduce(reducer) + 200
+              : 200
+          )
+
+          setLegend(uniqueDataTypes)
+          setColumns(tempC)
+          setDataSource(tempDS)
+          setDefaultData(tempDS)
+          setCurrentTargetKeys(initialColNames)
+          setAllTargetKeysOrder(allTableConfigNames)
+          setExportData(tempDS)
         })
-
-        const reducer = (accumulator, currentValue) =>
-          accumulator + currentValue
-        // const active = tempC.filter((d) => d.default)
-
-        // for table width
-        setWidth(
-          defaultColumns.length > 0
-            ? colNames.map((d) => d.width).reduce(reducer) + 200
-            : 200
-        )
-
-        setColumns(tempC)
-        setDataSource(tempDS)
-        setTargetKeys(colNames)
-        setExportData(tempDS)
-        setLoading(false)
-      })
+        .then(() => setLoading(false))
     }
 
     fetchData()
@@ -95,79 +133,6 @@ const Main = ({ tableConfig, defaultTableData }) => {
     setIsModal(true)
   }
 
-  const handleExport = () => {
-    // const columns = targetKeys.map(d => d.toLowerCase())
-    // console.log("selectedKeys", selectedKeys)
-    // console.log("targetKeys", targetKeys)
-    // console.log("exportData", exportData)
-
-    const finalExport = exportData.map((row) => {
-      const result = {}
-      const keys = Object.keys(row)
-      targetKeys
-        .filter((d) => keys.indexOf(d.toLowerCase().replace(/\s+/g, "")) !== -1)
-        .map((key) => {
-          return (result[key] = row[key.toLowerCase().replace(/\s+/g, "")])
-        })
-
-      return result
-    })
-
-    const test = Object.keys(finalExport[0])
-
-    var ws = XLSX.utils.json_to_sheet(finalExport, { header: test })
-    wb.Sheets["Alumni"] = ws
-    var wbout = XLSX.write(wb, { bookType: "csv", type: "binary" })
-    function s2ab(s) {
-      var buf = new ArrayBuffer(s.length) //convert s to arrayBuffer
-      var view = new Uint8Array(buf) //create uint8array as viewer
-      for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff //convert to octet
-      return buf
-    }
-    saveAs(
-      new Blob([s2ab(wbout)], { type: "application/octet-stream" }),
-      "advancement.csv"
-    )
-  }
-
-  // const fetchNewData = async (fetchColumns) => {
-  //   fetchColumns.push("DonorID")
-
-  //   const result = await tableau.extensions.dashboardContent.dashboard.worksheets
-  //     .find((worksheet) => worksheet.name === "tableData")
-  //     .getDataSourcesAsync()
-  //     .then((datasources) => {
-  //       let dataSource = datasources.find(
-  //         (datasource) => datasource.name === "he_adv_survey"
-  //       )
-
-  //       return dataSource.getUnderlyingDataAsync({
-  //         columnsToInclude: fetchColumns,
-  //         maxRows: 0,
-  //       })
-
-  //       // return dataSource.getLogicalTablesAsync().then((logicalTables) => {
-  //       //   return dataSource.getLogicalTableDataAsync(logicalTables[0].id, {
-  //       //     columnsToInclude: fetchColumns,
-  //       //     // maxRows: 100000,
-  //       //   })
-  //       // })
-  //     })
-
-  //   // format data for Custom Table (defautls only)
-  //   result.data.map((row, i) => {
-  //     // for each donor
-  //     tempDS.push({ key: i })
-  //     return row.map((d, index) => {
-  //       return (tempDS[i][fetchColumns[index]] = d.formattedValue.trim())
-  //     })
-  //   })
-
-  //   return tempDS
-
-  //   // setDefaultTableData(result)
-  // }
-
   const appendData = (newData) => {
     let returnedTarget = dataSource.map((item, i) =>
       Object.assign({}, item, newData[i])
@@ -175,35 +140,105 @@ const Main = ({ tableConfig, defaultTableData }) => {
     return returnedTarget
   }
 
-  const handleSelectedChange = (sourceSelectedKeys, targetSelectedKeys) => {
-    setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys])
+  const clearFilters = () => {
+    const temp = modifiedColumns.map((column) => {
+      // if() {
+      column.filteredValue = null
+      // }
+      return column
+    })
+
+    setModifiedColumns(
+      temp.sort(function (a, b) {
+        return a.columnOrder - b.columnOrder
+      })
+    )
+    setHasFilters(false)
   }
 
-  const handleKeyChange = (nextTargetKeys, direction, moveKeys) => {
-    const fetchColumns = nextTargetKeys.filter((x) => !targetKeys.includes(x))
+  const handleReset = (clearFilters) => {
+    clearFilters()
+  }
 
-    setTargetKeys(nextTargetKeys)
+  const handleKeyChange = (targetKeys, direction, moveKeys) => {
+    const initialColNames = defaultTableData.columns.map((d) => d.fieldName)
+
+    const isRequired = targetKeys.some(function (d) {
+      return [...currentTargetKeys, ...initialColNames].indexOf(d) === -1
+    })
+
+    const orderedTargetKeys = allTargetKeysOrder.filter((d) =>
+      targetKeys.includes(d)
+    )
+
+    const diff = currentTargetKeys.filter((d) => targetKeys.indexOf(d) === -1)
+    console.log("diff :>> ", diff)
+    console.log("modifiedColumns :>> ", modifiedColumns)
+
+    const filteredColumns = modifiedColumns.filter((column) => {
+      return column.filteredValue !== null && diff.indexOf(column.name) > -1
+    })
+    console.log("filteredColumns :>> ", filteredColumns)
+
+    // filteredColumns
+    setFiltersToClear(filteredColumns)
+    setIsFetchRequired(isRequired)
+    setCurrentTargetKeys(orderedTargetKeys)
   }
 
   const handleOk = () => {
     setReloading(true)
     setIsModal(false)
-    const promise = getSelectedColumnsConfig(tableConfig, targetKeys)
-    console.log("promise", promise)
+    const promise = getSelectedColumnsConfig(tableConfig, currentTargetKeys)
+
     const reducer = (accumulator, currentValue) => accumulator + currentValue
     setWidth(
       promise.length > 0
-        ? promise.map((d) => d.width).reduce(reducer) + 200
-        : 200
+        ? promise.map((d) => d.width).reduce(reducer) + 220
+        : 220
     )
     console.log("started")
+    // console.log("promise :>> ", promise)
 
-    // adding columns
-    fetchNewData(promise, dataSource)
-      .then((res) => setDataSource(res))
-      .then(() => setReloading(false))
+    const initialColNames = defaultTableData.columns.map((d) => d.fieldName)
+    const isMergeRequired = currentTargetKeys.some(function (d) {
+      return initialColNames.indexOf(d) === -1
+    })
+    const emptyPromise = new Promise((resolve) => {
+      resolve("Success!")
+    })
 
-    console.log("targetKeys", targetKeys)
+    console.log("modifiedColumns at handleOK:>> ", modifiedColumns)
+    console.log("filtersToClear:>> ", filtersToClear)
+
+    if (isFetchRequired) {
+      // adding columns
+      fetchNewData(promise, dataSource, ID)
+        .then((res) => {
+          setDataSource(res)
+        })
+        .then(setIsFetchRequired(false))
+        .then(() => setReloading(false))
+        .catch((err) => alert(err))
+    } else {
+      emptyPromise
+        .then(() =>
+          setModifiedColumns(
+            // FIX HERE
+            modifiedColumns.map((column) => {
+              if (filtersToClear.includes(column)) {
+                console.log("hit on filterClears :>>")
+                column.filteredValue = null
+              }
+              return column
+            })
+          )
+        ) //clear filter
+        .then(() => {
+          // setFiltersToClear()
+          setReloading(false)
+        })
+    }
   }
 
   return (
@@ -211,28 +246,53 @@ const Main = ({ tableConfig, defaultTableData }) => {
       {loading ? (
         <div></div>
       ) : (
-        <div style={{ margin: "0px 16px" }}>
+        <div style={{ margin: "0px 12px" }}>
           <CustomModal
             columns={columns}
-            targetKeys={targetKeys}
-            selectedKeys={selectedKeys}
+            targetKeys={currentTargetKeys}
+            // selectedKeys={selectedKeys}
+            // handleSelectedChange={handleSelectedChange}
             handleKeyChange={handleKeyChange}
-            handleSelectedChange={handleSelectedChange}
             isModal={isModal}
             setIsModal={setIsModal}
             handleOk={handleOk}
           ></CustomModal>
-          <div className='tableButtonContainer'>
+          <div className='tableButtonContainer' id='btnContainer'>
             <div className='d-flex flex-row justify-content-around'>
+              {hasFilters ? (
+                <Tooltip
+                  placement='left'
+                  overlayStyle={{ fontSize: 12 }}
+                  title='Clear Filters'
+                  id='clear'
+                >
+                  <Button
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      margin: "0px 6px",
+                    }}
+                    type='primary'
+                    icon={<UndoOutlined />}
+                    shape='circle'
+                    size='default'
+                    onClick={clearFilters}
+                  ></Button>
+                </Tooltip>
+              ) : null}
               <Tooltip
                 placement='left'
                 overlayStyle={{ fontSize: 12 }}
                 title='Add or Remove Columns'
               >
                 <Button
+                  style={{
+                    margin: "0px 6px",
+                  }}
                   id='addremove'
                   type='primary'
-                  icon='edit'
+                  icon={<EditOutlined />}
                   shape='circle'
                   size='default'
                   onClick={showModal}
@@ -245,31 +305,72 @@ const Main = ({ tableConfig, defaultTableData }) => {
                 title='Export Selection as CSV'
               >
                 <Button
+                  style={{
+                    margin: "0px 6px",
+                  }}
                   id='download'
                   type='primary'
-                  icon='download'
+                  icon={<DownloadOutlined />}
                   shape='circle'
                   size='default'
-                  onClick={handleExport}
+                  onClick={() => handleExport(currentTargetKeys, exportData)}
                 ></Button>
               </Tooltip>
             </div>
           </div>
-          <div className='d-flex' style={{ paddingLeft: 8 }}>
-            <Tag color='#2db7f5'>Data Appends</Tag>
-            <Tag color='#f50'>Survey Data</Tag>
-          </div>
+          {legend ? (
+            <div
+              className='d-flex legend-container'
+              style={{ paddingLeft: 8, paddingBottom: 12 }}
+            >
+              {legend.map((d) => {
+                return (
+                  <Tooltip
+                    key={d}
+                    placement='bottom'
+                    overlayStyle={{ fontSize: 12 }}
+                    title='placeholder'
+                  >
+                    <Tag
+                      key={d}
+                      className={`ant-tag-${d
+                        .toLowerCase()
+                        .replace(/\s+/g, "")}`}
+                    >
+                      {d}
+                    </Tag>
+                  </Tooltip>
+                )
+              })}
+            </div>
+          ) : null}
+          {/* Institutional Data Augmented Updated Data Append Flags Survey Data */}
           {!reloading ? (
             <CustomTable
+              ID={ID}
               dataSource={dataSource}
               columns={columns}
               width={width}
-              targetKeys={targetKeys}
+              targetKeys={currentTargetKeys}
+              setDataSource={setDataSource}
               setExportData={setExportData}
-              setExportHeaders={setExportHeaders}
+              setHasFilters={setHasFilters}
+              modifiedColumns={modifiedColumns}
+              setModifiedColumns={setModifiedColumns}
+              clearFilters={clearFilters}
+              handleReset={handleReset}
+              filtersToClear={filtersToClear}
+              // setExportHeaders={setExportHeaders}
             ></CustomTable>
           ) : (
-            <div>wait...</div>
+            <div
+              className='w-100 d-flex justify-content-center align-items-center'
+              style={{ height: 450 }}
+            >
+              <div>
+                <Spin tip='Retrieving Donors...' indicator={antIcon}></Spin>
+              </div>
+            </div>
           )}
         </div>
       )}

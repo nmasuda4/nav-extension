@@ -1,5 +1,6 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { InputNumber, Button } from "antd"
+import { SearchOutlined } from "@ant-design/icons"
 
 const PrecisionFilter = ({
   column,
@@ -18,19 +19,13 @@ const PrecisionFilter = ({
   const [minSelect, setMinSelect] = useState()
   const [maxSelect, setMaxSelect] = useState()
 
-  if (!hasFilters) {
-    console.log("should have resetted")
-    setMinSelect(min)
-    setMaxSelect(max)
-  }
-
-  // useEffect(() => {
-  //   if (!hasFilters) {
-  //     console.log("should have resetted")
-  //     setMinSelect(min)
-  //     setMaxSelect(max)
-  //   }
-  // }, [hasFilters])
+  useEffect(() => {
+    if (!hasFilters) {
+      console.log("should have resetted")
+      setMinSelect(min)
+      setMaxSelect(max)
+    }
+  }, [hasFilters])
 
   const onMinChange = (value) => {
     setMinSelect(value)
@@ -56,7 +51,7 @@ const PrecisionFilter = ({
     }
   }
 
-  console.log("range", [minSelect, maxSelect])
+  // console.log("range", [minSelect, maxSelect])
 
   return (
     <div className='d-flex w-100 m-2 justify-content-center flex-column'>
@@ -91,8 +86,8 @@ const PrecisionFilter = ({
       <div className='scale d-flex w-100 m-2 justify-content-start'>
         <Button
           type='primary'
-          onClick={() => handleSearch(selectedKeys, confirm, column.fieldName)}
-          icon='search'
+          onClick={() => handleSearch(selectedKeys, confirm, column.name)}
+          icon={<SearchOutlined />}
           size='small'
           style={{ width: 90, marginRight: 8 }}
         >

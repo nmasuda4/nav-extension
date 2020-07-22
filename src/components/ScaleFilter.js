@@ -1,5 +1,6 @@
 import React from "react"
 import { Slider, Button } from "antd"
+import { SearchOutlined } from "@ant-design/icons"
 
 const ScaleFilter = ({
   column,
@@ -14,7 +15,6 @@ const ScaleFilter = ({
   step,
   prefix,
 }) => {
-  console.log("min, max", column, min, max)
   function formatter(value) {
     if (prefix === "$") {
       return `${prefix}${value
@@ -54,7 +54,7 @@ const ScaleFilter = ({
       <Button
         type='primary'
         onClick={() => handleSearch(selectedKeys, confirm, column.fieldName)}
-        icon='search'
+        icon={<SearchOutlined />}
         size='small'
         style={{ width: 90, marginRight: 8 }}
       >

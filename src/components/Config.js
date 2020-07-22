@@ -60,8 +60,8 @@ const Config = () => {
 
   return (
     <div>
-      <div className='d-flex flex-row p-4'>
-        {/* <h3>Please select Phase:</h3> */}
+      <div className='d-flex flex-column p-4'>
+        <h3>Please select Phase:</h3>
 
         <Radio.Group className='m-4' onChange={onChange} value={value}>
           <Radio style={radioStyle} value={1}>

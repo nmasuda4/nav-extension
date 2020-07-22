@@ -1,101 +1,120 @@
 import React from "react"
-import { Icon, Tag } from "antd"
+import { Tag, Button } from "antd"
+import { SearchOutlined } from "@ant-design/icons"
 
 const assignColumns = function (column, i) {
   const {
     Name,
-    Type,
-    Filter,
-    Width,
-    Source,
-    Sort,
-    Permanent,
-    Default,
-    Index,
+    DataSource,
+    DataType,
+    FilterType,
+    ColumnOrder,
+    ColumnWidth,
+    Identifier,
+    DropdownSortOrder,
+    MenuCategory,
+    SortEnabled,
   } = column
-
-  const tagColors = [
-    "#3C786E",
-    "#939598",
-    "#FFBD9C",
-    "#3C786E",
-    "#FC4C02",
-    "#484E66",
-    "#00594C",
-    "#1F2A44",
-  ]
 
   // add width (with default)
   function addWidth(defaultWidth) {
-    const formattedWidth = Width !== "%null%" ? Width : defaultWidth
-    return formattedWidth
-  }
-
-  // dataIndex (lowercase, no space)
-  function addDataIndex(Name) {
-    return Name.toLowerCase().replace(/\s+/g, "")
-  }
-
-  // if null then blank
-  function addRender() {
-    if (Type === "Id") {
-      return (text) => {
-        const formattedText = text === "Null" ? "" : text
-        return formattedText
-      }
-    }
+    return ColumnWidth !== "%null%" ? ColumnWidth : defaultWidth
   }
 
   // add filter icon based on filter
   function addFilterIcon() {
-    if (Filter === "Search") {
+    if (FilterType === "Search") {
       return (filtered) => (
-        <Icon
-          type='search'
-          style={{ color: filtered ? "#1890ff" : undefined }}
+        <SearchOutlined
+          style={{
+            color: filtered ? "#1890ff" : undefined,
+          }}
         />
       )
     }
   }
 
+  // function addSort() {
+  //   return SortEnabled !== "%null%" && SortEnabled.toLowerCase() === "true"
+  //     ? (a, b, dropdownSortOrder) => {
+  //         if (dropdownSortOrder === "descend") {
+  //           return a[column.dataIndex].localeCompare(b[column.dataIndex])
+  //         } else {
+  //           return b[column.dataIndex].localeCompare(a[column.dataIndex])
+  //         }
+  //       }
+  //     : null
+  // }
+
+  // enable/disable sort
+  function addSorter(SortEnabled, Name) {
+    return SortEnabled !== "%null%"
+      ? (a, b) => a[Name].value - b[Name].value
+      : null
+  }
+
+  // function addDefaultSortOrder(DefaultSortOrder, DefaultSortDirection) {
+  //   return DefaultSortDirection !== "%null%" && DefaultSortOrder !== "%null%"
+  //     ? DefaultSortDirection.toLowerCase()
+  //     : null
+  // }
+
   // sort order for dropdowns
-  function addCustomSort() {
-    const sort =
-      Sort !== "%null%" ? Sort.split("|").map((item) => item.trim()) : []
-    return sort
+  function addCustomDropdownSort() {
+    return DropdownSortOrder !== "%null%"
+      ? DropdownSortOrder.includes("|")
+        ? DropdownSortOrder.split("|").map((item) => item.trim())
+        : DropdownSortOrder.trim()
+      : []
+  }
+
+  // enable/disable filter
+  function addFilter() {
+    return FilterType !== "%null%" ? [] : null
   }
 
   // add color coded source tag
   function addTagHeader() {
-    if (Source === "Append") {
-      return <Tag color='#2db7f5'>{Name}</Tag>
-    } else if (Source === "Survey") {
-      return <Tag color='#f50'>{Name}</Tag>
-    } else {
-      return <span style={{ fontSize: 12, fontWeight: 400 }}>{Name}</span>
+    return (
+      <Tag className={`ant-tag-${DataType.toLowerCase().replace(/\s+/g, "")}`}>
+        {Name}
+      </Tag>
+    )
+  }
+
+  // blanks instead of nulls
+  function replaceNull() {
+    let nullValues = ["Null", "Na", "NA", "N/A"]
+    return (text) => {
+      const rightText = typeof text === "object" ? text.formattedValue : text
+      const formattedText = nullValues.indexOf(rightText) > -1 ? "" : rightText
+
+      return formattedText
     }
   }
 
   return {
-    Name: Name,
-    fieldname: Name,
+    key: Name,
+    name: Name,
     dataIndex: Name,
-    width: addWidth(180),
-    indexOriginal: i,
-    indexSource: Index.toString(),
-    filters: [],
+    width: addWidth(220),
+    dataSource: DataSource,
+    columnOrder: ColumnOrder,
+    sorter: addSorter(SortEnabled, Name),
+    dropdownSortOrder: addCustomDropdownSort(),
+    // defaultSortOrder: addDefaultSortOrder(
+    //   DefaultSortOrder,
+    //   DefaultSortDirection
+    // ),
+    // sortDirections: ["descend", "ascend"],
+    menuCategory: MenuCategory,
+    render: replaceNull(),
+    permanent: Identifier == true,
+    filters: addFilter(),
     filterIcon: addFilterIcon(),
-    sort: addCustomSort(),
-    sortDirections: ["descend", "ascend"],
-    render: addRender(),
-    permanent: Permanent === "Yes",
-    filter: Filter,
-    type: Type,
-    default: Default === "Yes",
-    source: Source.toLowerCase(),
+    filter: FilterType,
+    dataType: DataType,
     title: addTagHeader(),
-    colors: Type === "Persona" ? tagColors : [],
-    key: addDataIndex(Name),
   }
 }
 

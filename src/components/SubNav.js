@@ -1,6 +1,12 @@
 import React from "react"
-import { Layout, Menu, Icon } from "antd"
+import { Layout, Menu } from "antd"
 import WarningPersona from "./WarningPersona"
+import {
+  NotificationOutlined,
+  MessageOutlined,
+  PieChartOutlined,
+  LinkOutlined,
+} from "@ant-design/icons"
 
 const { SubMenu } = Menu
 
@@ -9,17 +15,21 @@ const SubNav = ({
   onChange,
   onOpenChange,
   openKeysState,
-  subMenuKeys
+  subMenuKeys,
 }) => {
   const secondary = [
-    { name: "Understand", icon: "pie-chart" },
-    { name: "Motivate", icon: "message", options: ["21Summary", "Impact"] },
-    { name: "Communicate", icon: "link", options: ["31Summary"] },
+    { name: "Understand", icon: <PieChartOutlined /> },
+    {
+      name: "Motivate",
+      icon: <MessageOutlined />,
+      options: ["21Summary", "Impact"],
+    },
+    { name: "Communicate", icon: <LinkOutlined />, options: ["31Summary"] },
     {
       name: "Engage",
-      icon: "notification",
-      options: ["41Summary", "Giving", "Attitude", "Activity"]
-    }
+      icon: <NotificationOutlined />,
+      options: ["41Summary", "Giving", "Attitude", "Activity"],
+    },
   ]
 
   return (
@@ -30,7 +40,7 @@ const SubNav = ({
           height: "90vh",
           width: 180,
           margin: "0px",
-          backgroundColor: "white"
+          backgroundColor: "white",
         }}
       >
         <Menu
@@ -44,23 +54,23 @@ const SubNav = ({
             display: "flex",
             flexDirection: "column",
             width: 180,
-            fontSize: "12px"
+            fontSize: "12px",
           }}
         >
-          {secondary.map(view => {
+          {secondary.map((view) => {
             if (view.hasOwnProperty("options")) {
               return (
                 <SubMenu
                   key={view.name}
                   style={{
-                    fontSize: "12px"
+                    fontSize: "12px",
                   }}
                   title={
                     <span>
-                      <Icon type={view.icon} />
+                      {view.icon}
                       <span
                         style={{
-                          fontSize: "12px"
+                          fontSize: "12px",
                         }}
                       >
                         {view.name}
@@ -68,12 +78,12 @@ const SubNav = ({
                     </span>
                   }
                 >
-                  {view.options.map(option => {
+                  {view.options.map((option) => {
                     return (
                       <Menu.Item
                         key={option}
                         style={{
-                          fontSize: "12px"
+                          fontSize: "12px",
                         }}
                       >
                         {option.replace(/[0-9]/g, "")}
@@ -88,11 +98,11 @@ const SubNav = ({
                   key={view.name}
                   style={{
                     fontSize: "12px",
-                    height: "36px"
+                    height: "36px",
                   }}
                 >
                   <span>
-                    <Icon type={view.icon} />
+                    {view.icon}
                     <span>{view.name}</span>
                   </span>
                 </Menu.Item>

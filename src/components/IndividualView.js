@@ -1,11 +1,12 @@
 import React, { useEffect } from "react"
-import { Spin, Icon } from "antd"
+import { Spin } from "antd"
+import { LoadingOutlined } from "@ant-design/icons"
 import Main from "./Main"
 import { fetchConfig, fetchDefaultData } from "../functions/helpers"
 /* global tableau */
 
 const antIcon = (
-  <Icon type='loading' style={{ fontSize: 36, marginBottom: 12 }} spin />
+  <LoadingOutlined style={{ fontSize: 36, marginBottom: 12 }} spin />
 )
 
 const IndividualView = ({
@@ -20,7 +21,7 @@ const IndividualView = ({
     if (initialListLoad === false) {
       // fetch data from tableau worksheets
       tableau.extensions.initializeAsync().then(() => {
-        fetchConfig("Config", "Config")
+        fetchConfig("Table Configuration", "Table Configuration")
           .then(function (res) {
             setTableConfig(res)
             return fetchDefaultData(res, 150000)

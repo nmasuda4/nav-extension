@@ -5,6 +5,7 @@ import Nav from "./Nav"
 import "../App.css"
 
 /* global tableau */
+
 const App = () => {
   const [loading, setLoading] = useState(true)
   const [phase, setPhase] = useState("1")
@@ -60,7 +61,7 @@ const App = () => {
 
     const zoneVisibilityMap = {}
 
-    //sheets.map((d) => console.log("sheets", d.name, d.id))
+    sheets.map((d) => console.log("sheets", d.name, d.id))
 
     sheets.map((d) => {
       if (d.name === e.key) {
@@ -70,10 +71,24 @@ const App = () => {
       }
     })
 
+    if (e.key === "Summary") {
+      zoneVisibilityMap[
+        sheets.filter((d) => d.name === "Summary Blank")[0].id
+      ] = tableau.ZoneVisibilityType.Show
+
+      zoneVisibilityMap[
+        sheets.filter((d) => d.name === "Summary Blank Two")[0].id
+      ] = tableau.ZoneVisibilityType.Show
+    }
+
     if (e.key === "Persona") {
       if (openKeysState.length === 0) {
         zoneVisibilityMap[sheets.filter((d) => d.name === "Understand")[0].id] =
           tableau.ZoneVisibilityType.Show
+
+        zoneVisibilityMap[
+          sheets.filter((d) => d.name === "Understand Title")[0].id
+        ] = tableau.ZoneVisibilityType.Show
       }
       dash
         .setZoneVisibilityAsync(zoneVisibilityMap)
@@ -122,7 +137,10 @@ const App = () => {
     // const popupUrl = `${window.location.origin}/#/configure`
 
     tableau.extensions.ui
-      .displayDialogAsync(popupUrl, payload, { height: 300, width: 300 })
+      .displayDialogAsync(popupUrl, payload, {
+        height: 300,
+        width: 300,
+      })
       .then((closePayload) => {
         setPhase(closePayload)
       })
