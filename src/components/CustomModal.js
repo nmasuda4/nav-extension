@@ -1,6 +1,7 @@
 import React from "react"
 import { Modal, Tag, Tooltip } from "antd"
 import TransferList from "./TransferList"
+import { appendTooltip } from "../functions/helpers"
 
 const CustomModal = ({
   columns,
@@ -34,7 +35,7 @@ const CustomModal = ({
                       key={d}
                       placement='bottom'
                       overlayStyle={{ fontSize: 12 }}
-                      title='placeholder'
+                      title={appendTooltip(d)}
                     >
                       <Tag
                         key={d}

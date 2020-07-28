@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react"
 import Nav from "./Nav"
-
-// import Main from "./components/Main"
 import "../App.css"
 
 /* global tableau */
@@ -14,10 +12,8 @@ const App = () => {
   const [height, setHeight] = useState()
   const [openKeysState, setopenKeysState] = useState([])
   const [subMenuKeys, setsubMenuKeys] = useState(["Understand"])
-
   //table
   const [initialListLoad, setInitialListLoad] = useState(false)
-
   const ternary = ["Understand", "Motivate", "Communicate", "Engage"]
 
   const getSettings = (type) =>
@@ -43,8 +39,6 @@ const App = () => {
         return skip.indexOf(d) === -1
       })
 
-      //objects.map((d) => console.log("objects", d.name, d.id))
-
       setSheets(
         objects.filter((d) => {
           return unique.indexOf(d.name) !== -1
@@ -58,10 +52,7 @@ const App = () => {
 
   function onViewChange(e) {
     let dash = tableau.extensions.dashboardContent.dashboard
-
     const zoneVisibilityMap = {}
-
-    sheets.map((d) => console.log("sheets", d.name, d.id))
 
     sheets.map((d) => {
       if (d.name === e.key) {

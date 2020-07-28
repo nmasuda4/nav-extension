@@ -12,8 +12,8 @@ import CustomModal from "./CustomModal"
 import {
   fetchNewData,
   getSelectedColumnsConfig,
-  appendDefaultData,
   handleExport,
+  appendTooltip,
 } from "../functions/helpers"
 
 const antIcon = (
@@ -37,11 +37,9 @@ const Main = ({ tableConfig, defaultTableData }) => {
   const [filtersToClear, setFiltersToClear] = useState([])
 
   const [exportData, setExportData] = useState([])
-  // const [exportHeaders, setExportHeaders] = useState([])
   const tempDS = []
 
   var ID = tableConfig.filter((d) => d.Identifier == true)[0].Name
-  var Sort = tableConfig.filter((d) => d.SortEnabled == true)[0].Name
 
   useEffect(() => {
     // default only actions
@@ -54,7 +52,7 @@ const Main = ({ tableConfig, defaultTableData }) => {
 
       // wait for map to finish
       Promise.all(promise)
-        .then(function (results) {
+        .then(function (res) {
           const uniqueDataTypes = [
             ...new Set(
               tempC
@@ -62,9 +60,6 @@ const Main = ({ tableConfig, defaultTableData }) => {
                 .map((d) => d.dataType)
             ),
           ]
-          // console.log("uniqueDataTypes :>> ", uniqueDataTypes)
-          // console.log("defaultTableData :>> ", defaultTableData)
-
           // table config results
           const tableConfigColumns = tempC.filter(
             (d) => d.dataSource === "Default"
@@ -81,30 +76,18 @@ const Main = ({ tableConfig, defaultTableData }) => {
             (d) => defaultDataColumnNames.indexOf(d) > -1
           )
 
-          // format data for Custom Table (defautls only)
-          defaultTableData.data.map((row, i) => {
-            // for each donor
-            tempDS.push({ key: i })
-            return row.map((d, index) => {
-              // if (d.)
-              const tableauValue =
-                ["int", "float"].includes(
-                  defaultTableData.columns[index].dataType
-                ) && defaultTableData.columns[index].fieldName !== ID
-                  ? d
-                  : d.formattedValue.trim()
-              if (
-                tableConfigNames.indexOf(defaultDataColumnNames[index]) > -1
-              ) {
-                return (tempDS[i][defaultDataColumnNames[index]] = tableauValue)
-              }
-            })
-          })
+          for (let i = 0, l = defaultTableData.data.length; i < l; i++) {
+            const temp = {}
+
+            for (let j = 0, l = defaultTableData.data[i].length; j < l; j++) {
+              temp[defaultDataColumnNames[j]] = defaultTableData.data[i][j]
+            }
+
+            tempDS.push(temp)
+          }
 
           const reducer = (accumulator, currentValue) =>
             accumulator + currentValue
-
-          // const active = tempC.filter((d) => d.default)
 
           // for table width
           setWidth(
@@ -117,9 +100,9 @@ const Main = ({ tableConfig, defaultTableData }) => {
           setColumns(tempC)
           setDataSource(tempDS)
           setDefaultData(tempDS)
+          setExportData(tempDS)
           setCurrentTargetKeys(initialColNames)
           setAllTargetKeysOrder(allTableConfigNames)
-          setExportData(tempDS)
         })
         .then(() => setLoading(false))
     }
@@ -133,18 +116,10 @@ const Main = ({ tableConfig, defaultTableData }) => {
     setIsModal(true)
   }
 
-  const appendData = (newData) => {
-    let returnedTarget = dataSource.map((item, i) =>
-      Object.assign({}, item, newData[i])
-    )
-    return returnedTarget
-  }
-
   const clearFilters = () => {
     const temp = modifiedColumns.map((column) => {
-      // if() {
       column.filteredValue = null
-      // }
+
       return column
     })
 
@@ -172,16 +147,15 @@ const Main = ({ tableConfig, defaultTableData }) => {
     )
 
     const diff = currentTargetKeys.filter((d) => targetKeys.indexOf(d) === -1)
-    console.log("diff :>> ", diff)
-    console.log("modifiedColumns :>> ", modifiedColumns)
 
-    const filteredColumns = modifiedColumns.filter((column) => {
-      return column.filteredValue !== null && diff.indexOf(column.name) > -1
-    })
-    console.log("filteredColumns :>> ", filteredColumns)
+    const filteredColumns = modifiedColumns
+      .filter((column) => {
+        return column.filteredValue !== null && diff.indexOf(column.name) > -1
+      })
+      .map((d) => d.name)
 
     // filteredColumns
-    setFiltersToClear(filteredColumns)
+    setFiltersToClear([...filtersToClear, ...filteredColumns])
     setIsFetchRequired(isRequired)
     setCurrentTargetKeys(orderedTargetKeys)
   }
@@ -208,34 +182,41 @@ const Main = ({ tableConfig, defaultTableData }) => {
       resolve("Success!")
     })
 
-    console.log("modifiedColumns at handleOK:>> ", modifiedColumns)
-    console.log("filtersToClear:>> ", filtersToClear)
-
     if (isFetchRequired) {
+      console.log("fetch is required")
       // adding columns
       fetchNewData(promise, dataSource, ID)
         .then((res) => {
+          // console.log("res final :>> ", res)
           setDataSource(res)
         })
         .then(setIsFetchRequired(false))
-        .then(() => setReloading(false))
-        .catch((err) => alert(err))
-    } else {
-      emptyPromise
         .then(() =>
           setModifiedColumns(
-            // FIX HERE
             modifiedColumns.map((column) => {
               if (filtersToClear.includes(column)) {
-                console.log("hit on filterClears :>>")
                 column.filteredValue = null
               }
               return column
             })
           )
-        ) //clear filter
+        )
+        .then(() => setReloading(false))
+        .catch((err) => alert(err))
+    } else {
+      console.log("fetch is NOT required")
+      emptyPromise
+        .then(() =>
+          setModifiedColumns(
+            modifiedColumns.map((column) => {
+              if (filtersToClear.includes(column)) {
+                column.filteredValue = null
+              }
+              return column
+            })
+          )
+        )
         .then(() => {
-          // setFiltersToClear()
           setReloading(false)
         })
     }
@@ -250,8 +231,6 @@ const Main = ({ tableConfig, defaultTableData }) => {
           <CustomModal
             columns={columns}
             targetKeys={currentTargetKeys}
-            // selectedKeys={selectedKeys}
-            // handleSelectedChange={handleSelectedChange}
             handleKeyChange={handleKeyChange}
             isModal={isModal}
             setIsModal={setIsModal}
@@ -329,7 +308,7 @@ const Main = ({ tableConfig, defaultTableData }) => {
                     key={d}
                     placement='bottom'
                     overlayStyle={{ fontSize: 12 }}
-                    title='placeholder'
+                    title={appendTooltip(d)}
                   >
                     <Tag
                       key={d}
@@ -360,7 +339,7 @@ const Main = ({ tableConfig, defaultTableData }) => {
               clearFilters={clearFilters}
               handleReset={handleReset}
               filtersToClear={filtersToClear}
-              // setExportHeaders={setExportHeaders}
+              setFiltersToClear={setFiltersToClear}
             ></CustomTable>
           ) : (
             <div

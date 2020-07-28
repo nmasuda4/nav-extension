@@ -169,29 +169,18 @@ export const fetchNewData = async (
     // for each dataTable
     return await Promise.all(
       newDataTables.map(async (dataTable) => {
-        // 1. get column names
-        const columnNames = await dataTable.columns.map((column) => {
-          return column.fieldName
-        })
-        // 2. convert to this format first
-        const tempDS = () => {
-          const dat = []
-          dataTable.data.map((row, i) => {
-            dat.push({})
+        let dat = []
+        const columnNames = dataTable.columns.map((d) => d.fieldName)
 
-            // for each donor
-            return row.map((d, index) => {
-              const tableauValue =
-                ["int", "float"].includes(dataTable.columns[index].dataType) &&
-                dataTable.columns[index].fieldName !== ID
-                  ? d
-                  : d.formattedValue.trim()
-              return (dat[i][columnNames[index]] = tableauValue)
-            })
-          })
-          return dat
+        for (let i = 0, l = dataTable.data.length; i < l; i++) {
+          const temp = {}
+          for (let j = 0, l = dataTable.data[i].length; j < l; j++) {
+            temp[columnNames[j]] = dataTable.data[i][j]
+          }
+          dat.push(temp)
         }
-        return tempDS()
+
+        return dat
       })
     )
   }
@@ -205,11 +194,9 @@ export const fetchNewData = async (
   // append data
   return getData(ID)
     .then((newDataTables) => {
-      console.log("newDataTables :>> ", newDataTables)
       return formatNewData(newDataTables, ID)
     })
     .then((res) => {
-      // console.log("formatNewData (res) :>> ", res)
       return appendFormattedData(currentDataSource, res, ID)
     })
 }
@@ -219,61 +206,34 @@ export const appendFormattedData = (
   formattedDataTables,
   ID
 ) => {
-  //const dataArray = [currentDataSource, ...formattedDataTables]
-
   const mergeById2 = (currentDataSource, formattedDataTables, ID) => {
-    // console.log("currentDataSource :>> ", currentDataSource)
-    // console.log("formattedDataTables :>> ", formattedDataTables)
-
-    let merged = []
-
-    currentDataSource.map((d, i) => {
-      merged.push({ ...d })
-
-      formattedDataTables.map((ds, di) => {
-        Object.assign(
-          merged[i],
-          ds.find((itmInner) => itmInner[ID] === currentDataSource[i][ID])
-        )
-      })
+    // sort current toble
+    currentDataSource.sort((a, b) => {
+      return a[ID] - b[ID]
     })
 
-    return merged
+    // sort new tables
+    for (let i = 0, l = formattedDataTables.length; i < l; i++) {
+      formattedDataTables[i].sort((a, b) => {
+        return a[ID] - b[ID]
+      })
+
+      for (let j = 0, l = currentDataSource.length; j < l; j++) {
+        currentDataSource[j] = {
+          ...currentDataSource[j],
+          ...formattedDataTables[i][j],
+        }
+      }
+    }
+
+    return currentDataSource
   }
 
   return mergeById2(currentDataSource, formattedDataTables, ID)
 }
 
 export const appendDefaultData = (currentDataSource, defaultData, ID) => {
-  // const dataArray = [currentDataSource, defaultData]
-
-  // console.log("dataArray for appending :>> ", dataArray)
-
   const mergeById2 = (currentDataSource, defaultData, ID) => {
-    // sort all by Donor ID
-    // dataArray.forEach((arr) => {
-    //   arr.sort((a, b) => {
-    //     return a["DonorID"] - b["DonorID"]
-    //   })
-    // })
-    // console.log("currentDataSource :>> ", currentDataSource)
-
-    // const temp = currentDataSource.map(d => d.)
-
-    //
-    // const numberOfDataSources = dataArray.length - 1
-    // return dataArray[0].map((item, i) => {
-    //   if (numberOfDataSources === 1) {
-    //     return Object.assign({}, item, dataArray[1][i])
-    //   } else {
-    //     console.log("Sorry, missing data")
-    //   }
-    // })
-
-    // if(currentTargetKeys ) {} else{
-    // console.log("currentDataSource :>> ", currentDataSource)
-    // console.log("defaultData :>> ", defaultData)
-
     let merged = []
 
     currentDataSource.map((d, i) => {
@@ -337,15 +297,25 @@ export const handleExport = (currentTargetKeys, exportData) => {
   )
 }
 
-// export const formatDataTable = (dataTable) => {
-//   const formattedData = []
-//   dataTable.data.map((row, i) => {
-//     // for each donor
-//     formattedData.push({ key: i })
-//     return row.map((d, index) => {
-//       return (formattedData[i][fetchColumns[index]] = d.formattedValue.trim())
-//     })
-//   })
-
-//   return formattedData
-// }
+export const appendTooltip = (tag) => {
+  switch (tag) {
+    case "Institutional Data":
+      return "These data fields are drawn directly from the data you provided to Hanover."
+      break
+    case "Augmented Data":
+      return "These data fields are the appended data fields from the third-party vendor. The information in these fields is provided entirely by the third-party vendor."
+      break
+    case "Updated Data":
+      return "These data fields are based on fields like contact information that were initially provided by you and have been updated with information from the third-party data vendor."
+      break
+    case "Data Append Flags":
+      return "These data fields summarize the results of the third-party data append and help flag the records that were updated in that process."
+      break
+    case "Hanover":
+      return "These data fields are computed by Hanover based on a combination of inputs."
+      break
+    case "Survey Data":
+      return "These data fields are drawn from the donor survey conducted by Hanover on your behalf."
+      break
+  }
+}

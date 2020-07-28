@@ -34,30 +34,12 @@ const assignColumns = function (column, i) {
     }
   }
 
-  // function addSort() {
-  //   return SortEnabled !== "%null%" && SortEnabled.toLowerCase() === "true"
-  //     ? (a, b, dropdownSortOrder) => {
-  //         if (dropdownSortOrder === "descend") {
-  //           return a[column.dataIndex].localeCompare(b[column.dataIndex])
-  //         } else {
-  //           return b[column.dataIndex].localeCompare(a[column.dataIndex])
-  //         }
-  //       }
-  //     : null
-  // }
-
   // enable/disable sort
   function addSorter(SortEnabled, Name) {
     return SortEnabled !== "%null%"
       ? (a, b) => a[Name].value - b[Name].value
       : null
   }
-
-  // function addDefaultSortOrder(DefaultSortOrder, DefaultSortDirection) {
-  //   return DefaultSortDirection !== "%null%" && DefaultSortOrder !== "%null%"
-  //     ? DefaultSortDirection.toLowerCase()
-  //     : null
-  // }
 
   // sort order for dropdowns
   function addCustomDropdownSort() {
@@ -84,12 +66,9 @@ const assignColumns = function (column, i) {
 
   // blanks instead of nulls
   function replaceNull() {
-    let nullValues = ["Null", "Na", "NA", "N/A"]
+    let nullValues = new Set(["%null%", "Null", "Na", "NA", "N/A"])
     return (text) => {
-      const rightText = typeof text === "object" ? text.formattedValue : text
-      const formattedText = nullValues.indexOf(rightText) > -1 ? "" : rightText
-
-      return formattedText
+      return nullValues.has(text.formattedValue) ? "" : text.formattedValue
     }
   }
 
@@ -102,11 +81,6 @@ const assignColumns = function (column, i) {
     columnOrder: ColumnOrder,
     sorter: addSorter(SortEnabled, Name),
     dropdownSortOrder: addCustomDropdownSort(),
-    // defaultSortOrder: addDefaultSortOrder(
-    //   DefaultSortOrder,
-    //   DefaultSortDirection
-    // ),
-    // sortDirections: ["descend", "ascend"],
     menuCategory: MenuCategory,
     render: replaceNull(),
     permanent: Identifier == true,

@@ -7,7 +7,6 @@ import "antd/dist/antd.css"
 import "../App.css"
 
 const CustomTable = ({
-  ID,
   dataSource,
   setDataSource,
   setExportData,
@@ -20,13 +19,10 @@ const CustomTable = ({
   modifiedColumns,
   setModifiedColumns,
   handleReset,
+  setFiltersToClear,
 }) => {
   const [filteredInfo, setFilteredInfo] = useState({})
   useEffect(() => {
-    console.log("filtersToClear useEffect:>> ", filtersToClear)
-    // console.log("dataSource :>> ", dataSource)
-    // console.log("columns :>> ", columns)
-    // console.log("targetKeys :>> ", targetKeys)
     // keep only selected columns
     const temp = columns.filter((column) => {
       return targetKeys.indexOf(column.name) !== -1 || column.permanent
@@ -34,91 +30,55 @@ const CustomTable = ({
 
     // all table configurations that are based on data
     temp.map((column) => {
-      // const uniqueFormatted = []
+      if (filtersToClear.length > 0) {
+        if (filtersToClear.indexOf(column.dataIndex) !== -1) {
+          column.filteredValue = null
+          const test = filtersToClear.filter(
+            (d) => column.dataIndex.indexOf(d) === -1
+          )
+          // remove the column added
+          setFiltersToClear(test)
+        }
+      }
 
       // get unique values for dropdown
       if (column.filter === "Dropdown") {
-        // const unique = [
-        //   ...new Set(
-        //     dataSource.map(
-        //       (h) => h[column.dataIndex].value || h[column.dataIndex]
-        //     ).map( d => {
+        const formattedValues = new Set(
+          dataSource.map((d) => d[column.dataIndex].formattedValue)
+        )
+        const values = new Set(dataSource.map((d) => d[column.dataIndex].value))
 
-        //     })
-        //   ),
-        // ]
+        formattedValues.delete("Null")
+        values.delete("%null%")
 
-        const unique = []
-        const map = new Map()
+        let uniqueFormatted = []
+        const arrFormattedValues = [...formattedValues]
+        const arrValues = [...values]
 
-        // for (const item of dataSource) {
-        //   if (
-        //     !map.has(
-        //       item[column.dataIndex].formattedValue || item[column.dataIndex]
-        //     )
-        //   ) {
-        //     map.set(
-        //       item[column.dataIndex].formattedValue || item[column.dataIndex],
-        //       true
-        //     ) // set any value to Map
-        //     unique.push({
-        //       text:
-        //         item[column.dataIndex].formattedValue || item[column.dataIndex],
-        //       value: item[column.dataIndex].value || item[column.dataIndex],
-        //     })
-        //   }
-        // }
-
-        dataSource.map((d) => {
-          let properText =
-            typeof d[column.dataIndex] === "object"
-              ? d[column.dataIndex].formattedValue
-              : d[column.dataIndex]
-
-          let properValue =
-            typeof d[column.dataIndex] === "object"
-              ? d[column.dataIndex].value
-              : d[column.dataIndex]
-
-          if (!map.has(properText)) {
-            map.set(properText, true) // set any value to Map
-            unique.push({
-              text: properText,
-              value: properValue,
-            })
+        for (let i = 0, l = arrFormattedValues.length; i < l; i++) {
+          uniqueFormatted[i] = {
+            text: arrFormattedValues[i],
+            value: arrValues[i],
           }
-        })
+        }
 
-        // unique.filter((d) => d.text !== "Null")
-
-        // .sort()
-
-        const uniqueFormatted =
-          column.dropdownSortOrder.length === 0
-            ? unique.filter((d) => d.text !== "Null") // default sort
-            : unique
-                .sort(function (a, b) {
-                  // for custom sort
-                  return (
-                    column.dropdownSortOrder.indexOf(a.text) -
-                    column.dropdownSortOrder.indexOf(b.text)
-                  )
-                })
-                .filter((d) => d.text !== "Null")
-
-        column.unique = uniqueFormatted
-
-        // dropdown example
-        // if (column.filter === "Dropdown") {
+        if (column.dropdownSortOrder.length === 0) {
+          uniqueFormatted.sort(function (a, b) {
+            return a.text - b.text
+          })
+        } else {
+          column.dropdownSortOrder.map((d) => {
+            return {
+              text: d,
+              value: d,
+            }
+          })
+        }
         column.filters = uniqueFormatted
 
         // filter
         column.onFilter = (value, record) => {
-          if (typeof record[column.dataIndex] === "string") {
-            return record[column.dataIndex].indexOf(value) === 0
-          } else {
-            return record[column.dataIndex].value === value
-          }
+          return record[column.dataIndex].value === value
         }
 
         column.className = column.source
@@ -128,16 +88,19 @@ const CustomTable = ({
       if (column.filter === "Search") {
         // search onfilter
         column.onFilter = (value, record) => {
-          if (typeof record[column.dataIndex] === "string") {
-            return record[column.dataIndex]
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase())
-          } else {
-            return record[column.dataIndex].formattedValue
-              .toLowerCase()
-              .includes(value.toLowerCase())
-          }
+          return record[column.dataIndex].formattedValue
+            .toLowerCase()
+            .includes(value.toLowerCase())
+          // if (typeof record[column.dataIndex] === "string") {
+          //   return record[column.dataIndex]
+          //     .toString()
+          //     .toLowerCase()
+          //     .includes(value.toLowerCase())
+          // } else {
+          //   return record[column.dataIndex].formattedValue
+          //     .toLowerCase()
+          //     .includes(value.toLowerCase())
+          // }
         }
 
         column.className = column.source
@@ -166,9 +129,8 @@ const CustomTable = ({
 
       // scale example
       if (column.filter === "Scale" || column.filter === "Precise") {
-        const unique = [
-          ...new Set(dataSource.map((h) => h[column.dataIndex].value)),
-        ]
+        const unique = new Set(dataSource.map((d) => d[column.dataIndex].value))
+        unique.delete("%null%")
 
         const min = Math.floor(Math.min(...unique))
         const max = Math.ceil(Math.max(...unique))
@@ -228,10 +190,9 @@ const CustomTable = ({
         return a.columnOrder - b.columnOrder
       })
     )
-  }, [dataSource, targetKeys, filteredInfo])
+  }, [dataSource, filteredInfo])
 
   const handleChange = (pagination, filters, sorter, extra) => {
-    console.log("filters :>> ", filters)
     const emptyPromise = new Promise((resolve) => {
       resolve("Success!")
     })
@@ -239,7 +200,6 @@ const CustomTable = ({
     emptyPromise
       .then(() => setFilteredInfo(filters))
       .then(() => {
-        console.log("filters :>> ", filters)
         const filterValues = Object.values(filters).map((d) => !d) || null
         const reducer = (accumulator, currentValue) =>
           accumulator || currentValue
@@ -254,9 +214,12 @@ const CustomTable = ({
         //   setHasFilters(false)
         // }
 
-        console.log("filtersToClear :>> ", filtersToClear)
         const temp = modifiedColumns.map((column) => {
-          column.filteredValue = filters[column.dataIndex]
+          console.log(column, filtersToClear.indexOf(column.dataIndex) === -1)
+          column.filteredValue =
+            filtersToClear.indexOf(column.dataIndex) === -1
+              ? filters[column.dataIndex]
+              : null
 
           // if (filtersToClear.includes(column)) {
           //   column.filteredValue = null
@@ -265,10 +228,6 @@ const CustomTable = ({
           // }
           return column
         })
-        console.log("temp 99 :>> ", temp)
-
-        // console.log("extra", extra.currentDataSource)
-        // console.log("filters :>> ", filters)
 
         setModifiedColumns(
           temp.sort(function (a, b) {
@@ -290,8 +249,6 @@ const CustomTable = ({
 
   const xScroll = width < 1140 ? "xhide" : "xshow"
   const yScroll = dataSource.length < 10 ? "yhide" : "yshow"
-
-  console.log("modifiedColumns :>> ", modifiedColumns)
 
   return (
     <>

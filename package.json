@@ -12,13 +12,13 @@
     "react-scripts": "^3.4.1",
     "xlsx": "^0.15.6"
   },
+  "homepage": "https://www.hanoverresearch.com/extensions/hea_master_test2",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "homepage": "https://www.hanoverresearch.com/extensions/hea_master_test2",
   "eslintConfig": {
     "extends": "react-app"
   },
