@@ -21,7 +21,7 @@ const PrecisionFilter = ({
 
   useEffect(() => {
     if (!hasFilters) {
-      console.log("should have resetted")
+      // console.log("should have resetted")
       setMinSelect(min)
       setMaxSelect(max)
     }

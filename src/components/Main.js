@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react"
 import { Button, Tooltip, Tag, Spin } from "antd"
 import {
   LoadingOutlined,
-  DownloadOutlined,
+  ExportOutlined,
   EditOutlined,
   UndoOutlined,
+  DownloadOutlined,
 } from "@ant-design/icons"
 import assignColumns from "../TableConfig"
 import CustomTable from "./CustomTable"
@@ -20,7 +21,7 @@ const antIcon = (
   <LoadingOutlined style={{ fontSize: 36, marginBottom: 12 }} spin />
 )
 
-const Main = ({ tableConfig, defaultTableData }) => {
+const Main = ({ tableConfig, defaultTableData, URL }) => {
   const [loading, setLoading] = useState(true)
   const [reloading, setReloading] = useState(false)
   const [dataSource, setDataSource] = useState([])
@@ -171,7 +172,7 @@ const Main = ({ tableConfig, defaultTableData }) => {
         ? promise.map((d) => d.width).reduce(reducer) + 220
         : 220
     )
-    console.log("started")
+
     // console.log("promise :>> ", promise)
 
     const initialColNames = defaultTableData.columns.map((d) => d.fieldName)
@@ -183,11 +184,10 @@ const Main = ({ tableConfig, defaultTableData }) => {
     })
 
     if (isFetchRequired) {
-      console.log("fetch is required")
+      // console.log("fetch is required")
       // adding columns
       fetchNewData(promise, dataSource, ID)
         .then((res) => {
-          // console.log("res final :>> ", res)
           setDataSource(res)
         })
         .then(setIsFetchRequired(false))
@@ -204,7 +204,7 @@ const Main = ({ tableConfig, defaultTableData }) => {
         .then(() => setReloading(false))
         .catch((err) => alert(err))
     } else {
-      console.log("fetch is NOT required")
+      // console.log("fetch is NOT required")
       emptyPromise
         .then(() =>
           setModifiedColumns(
@@ -295,6 +295,27 @@ const Main = ({ tableConfig, defaultTableData }) => {
                   onClick={() => handleExport(currentTargetKeys, exportData)}
                 ></Button>
               </Tooltip>
+
+              <Tooltip
+                placement='left'
+                overlayStyle={{ fontSize: 12 }}
+                title='Download Entire Dataset'
+                id='downloadAll'
+              >
+                <Button
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "0px 6px",
+                  }}
+                  type='primary'
+                  icon={<ExportOutlined />}
+                  shape='circle'
+                  size='default'
+                  onClick={() => window.open(URL)}
+                ></Button>
+              </Tooltip>
             </div>
           </div>
           {legend ? (
@@ -326,7 +347,6 @@ const Main = ({ tableConfig, defaultTableData }) => {
           {/* Institutional Data Augmented Updated Data Append Flags Survey Data */}
           {!reloading ? (
             <CustomTable
-              ID={ID}
               dataSource={dataSource}
               columns={columns}
               width={width}
@@ -336,7 +356,6 @@ const Main = ({ tableConfig, defaultTableData }) => {
               setHasFilters={setHasFilters}
               modifiedColumns={modifiedColumns}
               setModifiedColumns={setModifiedColumns}
-              clearFilters={clearFilters}
               handleReset={handleReset}
               filtersToClear={filtersToClear}
               setFiltersToClear={setFiltersToClear}

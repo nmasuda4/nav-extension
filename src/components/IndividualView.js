@@ -10,6 +10,7 @@ const antIcon = (
 )
 
 const IndividualView = ({
+  URL,
   initialListLoad,
   setInitialListLoad,
   tableConfig,
@@ -36,6 +37,7 @@ const IndividualView = ({
     <div style={{ width: "100%" }}>
       {initialListLoad ? (
         <Main
+          URL={URL}
           tableConfig={tableConfig}
           defaultTableData={defaultTableData}
         ></Main>

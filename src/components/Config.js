@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react"
-import { Button, Radio } from "antd"
+import { Button, Radio, Input } from "antd"
+
 /* global tableau */
 
 const Config = () => {
-  const [value, setValue] = useState()
+  const [phase, setPhase] = useState()
+  const [portalURL, setURL] = useState()
 
   const radioStyle = {
     display: "block",
@@ -24,17 +26,29 @@ const Config = () => {
         const getPhase = async () => {
           getSettings("phase").then((res) => {
             const numericRes = parseInt(res, 10)
-            setValue(numericRes)
+            console.log("numericRes :>> ", numericRes)
+            setPhase(numericRes)
+          })
+        }
+
+        const getURL = async () => {
+          getSettings("URL").then((res) => {
+            setURL(res)
           })
         }
 
         getPhase()
+        getURL()
       })
       .then(console.log("done"))
   }, [])
 
-  function onChange(e) {
-    setValue(e.target.value)
+  function onPhaseChange(e) {
+    setPhase(e.target.value)
+  }
+
+  function onURLChange(e) {
+    setURL(e.target.value)
   }
 
   const setSettings = (type, value) =>
@@ -48,14 +62,16 @@ const Config = () => {
       tableau.extensions.settings
         .saveAsync()
         .then((newSavedSettings) => {
-          tableau.extensions.ui.closeDialog(value)
+          tableau.extensions.ui.closeDialog()
           resolve(newSavedSettings)
         })
         .catch(reject)
     })
 
-  function onSave() {
-    setSettings("phase", value).then(saveSettings)
+  const onSave = () => {
+    setSettings("phase", phase)
+      .then(() => setSettings("URL", portalURL))
+      .then(() => saveSettings())
   }
 
   return (
@@ -63,7 +79,7 @@ const Config = () => {
       <div className='d-flex flex-column p-4'>
         <h3>Please select Phase:</h3>
 
-        <Radio.Group className='m-4' onChange={onChange} value={value}>
+        <Radio.Group className='m-2' onChange={onPhaseChange} value={phase}>
           <Radio style={radioStyle} value={1}>
             Phase 1
           </Radio>
@@ -74,6 +90,20 @@ const Config = () => {
             Phase 3
           </Radio>
         </Radio.Group>
+
+        <h3>Please add URL for raw file:</h3>
+
+        <Input
+          className='m-2'
+          defaultValue='Portal URL'
+          value={portalURL}
+          onChange={onURLChange}
+        />
+
+        <p style={{ fontSize: 11, marginLeft: 12 }}>
+          example:
+          https://hanoverresearch.secure.force.com/customerportal/myReports
+        </p>
 
         <Button type='primary' onClick={onSave}>
           Save Changes

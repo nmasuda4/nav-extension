@@ -7,6 +7,7 @@ import "../App.css"
 const App = () => {
   const [loading, setLoading] = useState(true)
   const [phase, setPhase] = useState("1")
+  const [URL, setURL] = useState("")
   const [view, setView] = useState(["Summary"])
   const [sheets, setSheets] = useState([])
   const [height, setHeight] = useState()
@@ -25,6 +26,10 @@ const App = () => {
     tableau.extensions.initializeAsync({ configure: configure }).then(() => {
       getSettings("phase").then((res) => {
         setPhase(res)
+      })
+
+      getSettings("URL").then((res) => {
+        setURL(res)
       })
 
       let dash = tableau.extensions.dashboardContent.dashboard
@@ -53,6 +58,7 @@ const App = () => {
   function onViewChange(e) {
     let dash = tableau.extensions.dashboardContent.dashboard
     const zoneVisibilityMap = {}
+    const sheetNames = sheets.map((d) => d.name)
 
     sheets.map((d) => {
       if (d.name === e.key) {
@@ -62,25 +68,48 @@ const App = () => {
       }
     })
 
-    if (e.key === "Summary") {
-      zoneVisibilityMap[
-        sheets.filter((d) => d.name === "Summary Blank")[0].id
-      ] = tableau.ZoneVisibilityType.Show
+    if (
+      e.key === "Summary" &&
+      sheetNames.indexOf("Summary Blank") > 0 &&
+      sheetNames.indexOf("Summary Blank Two") > 0
+    ) {
+      zoneVisibilityMap[sheets[sheetNames.indexOf("Summary Blank")].id] =
+        tableau.ZoneVisibilityType.Show
 
-      zoneVisibilityMap[
-        sheets.filter((d) => d.name === "Summary Blank Two")[0].id
-      ] = tableau.ZoneVisibilityType.Show
+      zoneVisibilityMap[sheets[sheetNames.indexOf("Summary Blank")].id] =
+        tableau.ZoneVisibilityType.Show
+    }
+
+    if (
+      e.key === "Methodology" &&
+      sheetNames.indexOf("Methodology Blank") > 0
+    ) {
+      zoneVisibilityMap[sheets[sheetNames.indexOf("Methodology Blank")].id] =
+        tableau.ZoneVisibilityType.Show
     }
 
     if (e.key === "Persona") {
+      if (sheetNames.indexOf("Understand Blank") > 0) {
+        zoneVisibilityMap[sheets[sheetNames.indexOf("Understand Blank")].id] =
+          tableau.ZoneVisibilityType.Show
+      }
+      console.log("openKeysState :>> ", openKeysState)
       if (openKeysState.length === 0) {
         zoneVisibilityMap[sheets.filter((d) => d.name === "Understand")[0].id] =
           tableau.ZoneVisibilityType.Show
-
-        zoneVisibilityMap[
-          sheets.filter((d) => d.name === "Understand Title")[0].id
-        ] = tableau.ZoneVisibilityType.Show
+      } else {
+        console.log("subMenuKeys :>> ", subMenuKeys[0])
+        if (phase === "3") {
+          zoneVisibilityMap[
+            sheets.filter((d) => d.name === subMenuKeys[0])[0].id
+          ] = tableau.ZoneVisibilityType.Show
+        }
       }
+
+      zoneVisibilityMap[
+        sheets.filter((d) => d.name === "Understand Title")[0].id
+      ] = tableau.ZoneVisibilityType.Show
+
       dash
         .setZoneVisibilityAsync(zoneVisibilityMap)
         .then(() => setView([e.key]))
@@ -97,7 +126,11 @@ const App = () => {
     const zoneVisibilityMap = {}
 
     sheets.map((d) => {
-      if (d.name === e.key || d.name === "Persona") {
+      if (
+        d.name === e.key ||
+        d.name === "Persona" ||
+        d.name === "Understand Title"
+      ) {
         return (zoneVisibilityMap[d.id] = tableau.ZoneVisibilityType.Show)
       } else {
         return (zoneVisibilityMap[d.id] = tableau.ZoneVisibilityType.Hide)
@@ -124,13 +157,13 @@ const App = () => {
   function configure() {
     let payload = ""
 
-    const popupUrl = `${window.location.origin}/extensions/hea_master_test2/#/configure`
+    const popupUrl = `${window.location.origin}/extensions/hea_v2/#/configure`
     // const popupUrl = `${window.location.origin}/#/configure`
 
     tableau.extensions.ui
       .displayDialogAsync(popupUrl, payload, {
-        height: 300,
-        width: 300,
+        height: 400,
+        width: 500,
       })
       .then((closePayload) => {
         setPhase(closePayload)
@@ -154,6 +187,7 @@ const App = () => {
         <div className='mainContainer'>
           <Nav
             phase={phase}
+            URL={URL}
             view={view}
             sheets={sheets}
             height={height}
@@ -164,6 +198,7 @@ const App = () => {
             subMenuKeys={subMenuKeys}
             initialListLoad={initialListLoad}
             setInitialListLoad={setInitialListLoad}
+
             // tableConfig={tableConfig}
             // setTableConfig={setTableConfig}
             // defaultTableData={defaultTableData}

@@ -46,7 +46,7 @@ const assignColumns = function (column, i) {
     return DropdownSortOrder !== "%null%"
       ? DropdownSortOrder.includes("|")
         ? DropdownSortOrder.split("|").map((item) => item.trim())
-        : DropdownSortOrder.trim()
+        : [DropdownSortOrder.trim()]
       : []
   }
 

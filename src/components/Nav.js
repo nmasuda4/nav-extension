@@ -22,6 +22,7 @@ const primary = [
 
 const Nav = ({
   phase,
+  URL,
   view,
   onViewChange,
   onSubViewChange,
@@ -123,6 +124,7 @@ const Nav = ({
         ) : null}
         {view[0] === "Individual" ? (
           <IndividualView
+            URL={URL}
             initialListLoad={initialListLoad}
             setInitialListLoad={setInitialListLoad}
             tableConfig={tableConfig}

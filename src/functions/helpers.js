@@ -113,6 +113,52 @@ export const fetchNewData = async (
   currentDataSource,
   ID
 ) => {
+  function equalSets(as, bs) {
+    if (as.size !== bs.size) return false
+    for (var a of as) if (!bs.has(a)) return false
+    return true
+  }
+
+  const appendFormattedData = (currentDataSource, formattedDataTables, ID) => {
+    // validate here
+    const uniqueCurrentDataSource = new Set(
+      currentDataSource.map((d) => d[ID].value)
+    )
+
+    // original order
+    currentDataSource.map((d, i) => (d.sortIndex = i))
+
+    const mergeById = (currentDataSource, formattedDataTables, ID) => {
+      // sort current table
+      currentDataSource.sort((a, b) =>
+        a[ID].value < b[ID].value ? -1 : a[ID].value > b[ID].value ? 1 : 0
+      )
+
+      // sort new tables
+      for (let i = 0, l = formattedDataTables.length; i < l; i++) {
+        formattedDataTables[i].sort((a, b) =>
+          a[ID].value < b[ID].value ? -1 : a[ID].value > b[ID].value ? 1 : 0
+        )
+
+        const unique = new Set(formattedDataTables[i].map((d) => d[ID].value))
+
+        if (equalSets(uniqueCurrentDataSource, unique)) {
+          for (let j = 0, l = currentDataSource.length; j < l; j++) {
+            currentDataSource[j] = {
+              ...formattedDataTables[i][j],
+              ...currentDataSource[j],
+            }
+          }
+        } else {
+          console.log("inconsistent data sets")
+        }
+      }
+      return currentDataSource.sort((a, b) => a.sortIndex - b.sortIndex)
+    }
+
+    return mergeById(currentDataSource, formattedDataTables, ID)
+  }
+
   const groupByArray = function (xs, key) {
     return xs.reduce(function (rv, x) {
       let v = key instanceof Function ? key(x) : x[key]
@@ -131,7 +177,6 @@ export const fetchNewData = async (
   const uniqueDataSources = temp.filter((d) => d.key !== "Default")
 
   // also filter out columns in existing datasources
-
   const functionWithPromise = (columns, dataSource, ID) => {
     //a function that returns a promise
     return new Promise(function (resolve, reject) {
@@ -139,7 +184,6 @@ export const fetchNewData = async (
         .find((worksheet) => worksheet.name === dataSource)
         .getDataSourcesAsync()
         .then((datasources) => {
-          // console.log("datasources searched :>> ", datasources)
           let dataSourceFound = datasources.find(
             (datasource) => datasource.name === dataSource
           )
@@ -199,37 +243,6 @@ export const fetchNewData = async (
     .then((res) => {
       return appendFormattedData(currentDataSource, res, ID)
     })
-}
-
-export const appendFormattedData = (
-  currentDataSource,
-  formattedDataTables,
-  ID
-) => {
-  const mergeById2 = (currentDataSource, formattedDataTables, ID) => {
-    // sort current toble
-    currentDataSource.sort((a, b) => {
-      return a[ID] - b[ID]
-    })
-
-    // sort new tables
-    for (let i = 0, l = formattedDataTables.length; i < l; i++) {
-      formattedDataTables[i].sort((a, b) => {
-        return a[ID] - b[ID]
-      })
-
-      for (let j = 0, l = currentDataSource.length; j < l; j++) {
-        currentDataSource[j] = {
-          ...currentDataSource[j],
-          ...formattedDataTables[i][j],
-        }
-      }
-    }
-
-    return currentDataSource
-  }
-
-  return mergeById2(currentDataSource, formattedDataTables, ID)
 }
 
 export const appendDefaultData = (currentDataSource, defaultData, ID) => {
@@ -316,6 +329,8 @@ export const appendTooltip = (tag) => {
       break
     case "Survey Data":
       return "These data fields are drawn from the donor survey conducted by Hanover on your behalf."
+      break
+    default:
       break
   }
 }

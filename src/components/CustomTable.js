@@ -8,7 +8,6 @@ import "../App.css"
 
 const CustomTable = ({
   dataSource,
-  setDataSource,
   setExportData,
   filtersToClear,
   columns,
@@ -48,33 +47,64 @@ const CustomTable = ({
         )
         const values = new Set(dataSource.map((d) => d[column.dataIndex].value))
 
-        formattedValues.delete("Null")
-        values.delete("%null%")
+        // formattedValues.delete("Null")
+        // values.delete("%null%")
 
         let uniqueFormatted = []
         const arrFormattedValues = [...formattedValues]
         const arrValues = [...values]
 
+        if (arrFormattedValues.includes("Null")) {
+          arrFormattedValues[arrFormattedValues.indexOf("Null")] = "(Blanks)"
+        }
+
+        // format for dropdown {text, value}
         for (let i = 0, l = arrFormattedValues.length; i < l; i++) {
           uniqueFormatted[i] = {
             text: arrFormattedValues[i],
             value: arrValues[i],
           }
         }
+        let filters
 
         if (column.dropdownSortOrder.length === 0) {
-          uniqueFormatted.sort(function (a, b) {
-            return a.text - b.text
+          filters = uniqueFormatted.sort(function (a, b) {
+            // equal items sort equally
+            if (a.text === b.text) {
+              return 0
+            }
+            // nulls sort after anything else
+            else if (a.text === "(Blanks)") {
+              return 1
+            } else if (b.text === "(Blanks)") {
+              return -1
+            } else {
+              return a.text < b.text ? -1 : 1
+            }
           })
         } else {
-          column.dropdownSortOrder.map((d) => {
+          let dat = column.dropdownSortOrder.map((d) => {
             return {
               text: d,
               value: d,
             }
           })
+          if (arrFormattedValues.includes("(Blanks)")) {
+            dat.push({ text: "(Blanks)", value: "%null%" })
+          }
+          filters = dat
         }
-        column.filters = uniqueFormatted
+
+        //  if (column.dropdownSortOrder.length > 0) {
+        //    const customDropdown = column.dropdownSortOrder.map((d) => {
+        //      return {
+        //        text: d,
+        //        value: d,
+        //      }
+        //    })
+        //    customDropdown.push({ text: "(Blanks)", value: "%null%" })
+        //  }
+        column.filters = filters
 
         // filter
         column.onFilter = (value, record) => {
@@ -215,7 +245,7 @@ const CustomTable = ({
         // }
 
         const temp = modifiedColumns.map((column) => {
-          console.log(column, filtersToClear.indexOf(column.dataIndex) === -1)
+          // console.log(column, filtersToClear.indexOf(column.dataIndex) === -1)
           column.filteredValue =
             filtersToClear.indexOf(column.dataIndex) === -1
               ? filters[column.dataIndex]
