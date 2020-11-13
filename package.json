@@ -12,6 +12,7 @@
     "react-scripts": "^3.4.1",
     "xlsx": "^0.15.6"
   },
+  "homepage": "https://www.hanoverresearch.com/extensions/hea_v2",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

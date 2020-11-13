@@ -1,3 +1,9 @@
+### Make sure to add "homepage": "https://www.hanoverresearch.com/extensions/hea_v2" to package.json
+
+### Make sure const popupUrl = `${window.location.origin}/extensions/hea_v2/#/configure`
+
+### Build then winscp
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
