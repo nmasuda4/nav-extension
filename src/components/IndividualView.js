@@ -25,7 +25,7 @@ const IndividualView = ({
         fetchConfig("Table Configuration", "Table Configuration")
           .then(function (res) {
             setTableConfig(res)
-            return fetchDefaultData(res, 150000)
+            return fetchDefaultData(res, 200000)
           })
           .then((res) => setDefaultTableData(res))
           .then(() => setInitialListLoad(true))

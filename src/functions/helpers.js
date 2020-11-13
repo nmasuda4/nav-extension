@@ -22,7 +22,7 @@ export const fetchConfig = async (sheetName, dataSourceName) => {
         const tableNames = dataTable.columns.map((column, i) => {
           return column.fieldName
         })
-
+        console.log("tableNames :>> ", tableNames)
         const table = dataTable.data.map((d, i) => {
           const tableValues = []
           const result = {}
@@ -129,6 +129,7 @@ export const fetchNewData = async (
     currentDataSource.map((d, i) => (d.sortIndex = i))
 
     const mergeById = (currentDataSource, formattedDataTables, ID) => {
+      console.log("formattedDataTables :>> ", formattedDataTables)
       // sort current table
       currentDataSource.sort((a, b) =>
         a[ID].value < b[ID].value ? -1 : a[ID].value > b[ID].value ? 1 : 0
@@ -178,6 +179,17 @@ export const fetchNewData = async (
 
   // also filter out columns in existing datasources
   const functionWithPromise = (columns, dataSource, ID) => {
+    // const result1 = tableau.extensions.dashboardContent.dashboard.worksheets
+    // console.log(
+    //   "result!!!!! :>> ",
+    //   result1
+    //     .find((worksheet) => worksheet.name === dataSource)
+    //     .getDataSourcesAsync()
+    //     .then((datasources) => {
+    //       console.log("datasources :>> ", datasources)
+    //     })
+    // )
+
     //a function that returns a promise
     return new Promise(function (resolve, reject) {
       const result = tableau.extensions.dashboardContent.dashboard.worksheets
@@ -187,7 +199,6 @@ export const fetchNewData = async (
           let dataSourceFound = datasources.find(
             (datasource) => datasource.name === dataSource
           )
-
           return dataSourceFound
             .getLogicalTablesAsync()
             .then((logicalTables) => {
@@ -199,7 +210,6 @@ export const fetchNewData = async (
               )
             })
         })
-
       resolve(result)
       reject(new Error("fail"))
     })
